@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -15,6 +16,18 @@ public class Picture {
 	protected int x, y;
 	protected double scaleSize;
 	protected double width, height;
+	protected double angle;
+	
+	public Picture() {
+		img = null;
+		tx = null;
+		x = 0;
+		y = 0;
+		scaleSize = 0;
+		width = 0;
+		height = 0;
+		angle = 0;
+	}
 
 	/**
 	 * 
@@ -52,7 +65,10 @@ public class Picture {
 		move();
 		// these are the 2 lines of code needed draw an image on the screen
 		Graphics2D g2 = (Graphics2D) g;
+		g2.rotate(angle * Math.PI / 180, x + width / 2, y + height / 2);
 		g2.drawImage(img, tx, null);
+		g2.setColor(Color.RED);
+		g2.drawRect(x, y, (int) (x + width), (int) (y + width));
 		update();
 
 	}
@@ -82,7 +98,7 @@ public class Picture {
 	}
 
 	protected void rotate(double angle) {
-		tx.rotate(angle, width / 2, height / 2);
+		this.angle += angle;
 	}
 
 	/**
