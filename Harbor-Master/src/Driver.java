@@ -21,6 +21,7 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 		g.fillRect(0, 0, screenW, screenH);
 
 		b.paint(g);
+		
 	}
 
 	public static void main(String[] arg) {
@@ -29,7 +30,7 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 	}
 
 	public Driver() {
-		JFrame frame = new JFrame("Space Invaders");
+		JFrame frame = new JFrame("Harbor Master");
 		// TODO: add icon image
 //		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(""));
 		frame.setSize(screenW, screenH);

@@ -17,7 +17,7 @@ public class Picture {
 	protected double scaleSize;
 	protected double width, height;
 	protected double angle;
-	
+
 	public Picture() {
 		img = null;
 		tx = null;
@@ -68,7 +68,7 @@ public class Picture {
 		g2.rotate(angle * Math.PI / 180, x + width / 2, y + height / 2);
 		g2.drawImage(img, tx, null);
 		g2.setColor(Color.RED);
-		g2.drawRect(x, y, (int) (x + width), (int) (y + width));
+		g2.drawRect(x, y, (int) (width), (int) (height));
 		update();
 
 	}

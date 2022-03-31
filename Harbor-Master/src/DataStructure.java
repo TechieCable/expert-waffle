@@ -161,14 +161,18 @@ class Queue extends DataStructure {
 	}
 
 	public String toString() {
-		if (in.size() > 0 && out.size() > 0) {
-			return "in: " + in + ", out: " + out;
-		} else if (in.size() > 0) {
-			return "in: " + in;
-		} else if (out.size() > 0) {
-			return "out: " + out;
+		if (size < 1) {
+			return "";
 		}
-		return "no data";
+
+		String res = "[";
+		for (int i = out.size() - 1; i >= 0; i++) {
+			res += out.data.get(i) + ", ";
+		}
+		for (int i = 0; i < in.size(); i++) {
+			res += in.data.get(i) + ", ";
+		}
+		return res + "]";
 	}
 
 }
