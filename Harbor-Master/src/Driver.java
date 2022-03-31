@@ -14,13 +14,13 @@ import javax.swing.Timer;
 public class Driver extends JPanel implements ActionListener, KeyListener, MouseListener {
 	static final int screenW = 1080, screenH = 1920;
 
-	Picture p = new Picture(100, 100, "boat1-0.png", 1);
+	Boat b = new Boat(10, 10, "boat1-0.png");
 
 	public void paint(Graphics g) {
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, screenW, screenH);
 
-		p.paint(g);
+		b.paint(g);
 	}
 
 	public static void main(String[] arg) {
@@ -67,16 +67,17 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 
 	public void mouseClicked(MouseEvent arg0) {
 //		System.out.println(arg0);
-		switch (arg0.getButton()) {
-		case 1:
-			p.rotate(10);
-			break;
-		case 3:
-			p.rotate(-10);
-			break;
-		default:
-			break;
-		}
+		b.addMove(new Position(arg0.getX(), arg0.getY()));
+//		switch (arg0.getButton()) {
+//		case 1:
+//			p.rotate(10);
+//			break;
+//		case 3:
+//			p.rotate(-10);
+//			break;
+//		default:
+//			break;
+//		}
 	}
 
 	public void mouseEntered(MouseEvent arg0) {
