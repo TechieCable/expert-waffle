@@ -14,14 +14,14 @@ import javax.swing.Timer;
 public class Driver extends JPanel implements ActionListener, KeyListener, MouseListener {
 	static final int screenW = 1080, screenH = 1920;
 
-	Boat b = new Boat(10, 10, "boat1-0.png");
+	Boat b = new Boat(500, 500, "boat1-0.png");
 
 	public void paint(Graphics g) {
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, screenW, screenH);
 
 		b.paint(g);
-		
+
 	}
 
 	public static void main(String[] arg) {

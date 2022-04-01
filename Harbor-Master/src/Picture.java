@@ -65,7 +65,7 @@ public class Picture {
 		move();
 		// these are the 2 lines of code needed draw an image on the screen
 		Graphics2D g2 = (Graphics2D) g;
-		g2.rotate(angle * Math.PI / 180, x + width / 2, y + height / 2);
+		g2.rotate(angle - Math.PI / 2, x + width / 2, y + height / 2);
 		g2.drawImage(img, tx, null);
 		g2.setColor(Color.RED);
 		g2.drawRect(x, y, (int) (width), (int) (height));
@@ -97,8 +97,8 @@ public class Picture {
 		tx.scale(scaleSize, scaleSize);
 	}
 
-	protected void rotate(double angle) {
-		this.angle += angle;
+	protected void rotateTo(double angle) {
+		this.angle = angle;
 	}
 
 	/**

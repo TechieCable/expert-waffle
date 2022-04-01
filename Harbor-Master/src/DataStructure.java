@@ -8,7 +8,7 @@ public class DataStructure {
 	 * 
 	 * @return size
 	 */
-	public int size() {
+	protected int size() {
 		return size;
 	}
 
@@ -17,7 +17,7 @@ public class DataStructure {
 	 * 
 	 * @param elem
 	 */
-	public void push(Position elem) {
+	protected void push(Position elem) {
 	}
 
 	/**
@@ -25,7 +25,7 @@ public class DataStructure {
 	 * 
 	 * @return elem
 	 */
-	public Position pop() {
+	protected Position pop() {
 		return null;
 	}
 
@@ -36,14 +36,14 @@ public class DataStructure {
 	 * 
 	 * @return elem
 	 */
-	public Position peek() {
+	protected Position peek() {
 		return null;
 	}
 
 	/**
 	 * remove all elements from the data structure
 	 */
-	public void clear() {
+	protected void clear() {
 	}
 
 	/**
