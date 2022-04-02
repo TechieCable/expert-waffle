@@ -43,6 +43,9 @@ public class Picture {
 		img = getImage("/imgs/" + fileName);
 		tx = AffineTransform.getTranslateInstance(x, y);
 		init(x, y);
+
+		width = img.getWidth(null) * scaleSize;
+		height = img.getHeight(null) * scaleSize;
 	}
 
 	/**
@@ -65,10 +68,14 @@ public class Picture {
 		move();
 		// these are the 2 lines of code needed draw an image on the screen
 		Graphics2D g2 = (Graphics2D) g;
+
 		g2.rotate(angle - Math.PI / 2, x + width / 2, y + height / 2);
+
 		g2.drawImage(img, tx, null);
 		g2.setColor(Color.RED);
 		g2.drawRect(x, y, (int) (width), (int) (height));
+
+		g2.rotate((angle - Math.PI / 2) * -1, x + width / 2, y + height / 2);
 		update();
 
 	}

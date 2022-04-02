@@ -1,21 +1,17 @@
-import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.Point;
 
-public class Position {
-	int x, y;
-
+@SuppressWarnings("serial")
+public class Position extends Point {
 	public Position() {
-		this(0, 0);
+		super();
 	}
 
 	public Position(int x, int y) {
-		this.x = x;
-		this.y = y;
+		super(x, y);
 	}
 
-	public void paint(Graphics g) {
-		g.setColor(Color.WHITE);
-		g.drawRect(x - 5, y - 5, 10, 10);
+	public Position(Point p) {
+		super(p.x, p.y);
 	}
 
 	public double angle(int x, int y) {
@@ -26,8 +22,12 @@ public class Position {
 		return angle(p.x, p.y);
 	}
 
-	public int distanceFrom(int x, int y) {
-		return (int) Math.sqrt(Math.pow(this.x - x, 2) + Math.pow(this.y - y, 2));
+	public double distanceFrom(int x, int y) {
+		return Math.sqrt(Math.pow(this.x - x, 2) + Math.pow(this.y - y, 2));
+	}
+
+	public double distanceFrom(Position p) {
+		return distanceFrom(p.x, p.y);
 	}
 
 	public String toString() {

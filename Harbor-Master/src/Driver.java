@@ -6,15 +6,20 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
 @SuppressWarnings("serial")
-public class Driver extends JPanel implements ActionListener, KeyListener, MouseListener {
-	static final int screenW = 1080, screenH = 1920;
+public class Driver extends JPanel implements ActionListener, KeyListener, MouseListener, MouseMotionListener {
+	public static int screenW = 1920, screenH = 1080;
 
 	Boat b = new Boat(500, 500, "boat1-0.png");
+	ArrayList<Boat> boats = new ArrayList<Boat>();
+	CursorDrag d = new CursorDrag();
 
 	public void paint(Graphics g) {
 		g.setColor(Color.BLACK);
@@ -38,9 +43,13 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.addKeyListener(this);
 		frame.addMouseListener(this);
+		frame.addMouseMotionListener(this);
 		t.start();
 
 		generate();
+
+//		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+//		frame.setUndecorated(true);
 
 		frame.setVisible(true);
 	}
@@ -54,46 +63,48 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 		repaint();
 	}
 
-	public void keyPressed(KeyEvent arg0) {
+	public void keyPressed(KeyEvent m) {
 
 	}
 
-	public void keyReleased(KeyEvent arg0) {
+	public void keyReleased(KeyEvent m) {
 
 	}
 
-	public void keyTyped(KeyEvent arg0) {
+	public void keyTyped(KeyEvent m) {
 
 	}
 
-	public void mouseClicked(MouseEvent arg0) {
-//		System.out.println(arg0);
-		b.addMove(new Position(arg0.getX(), arg0.getY()));
-//		switch (arg0.getButton()) {
-//		case 1:
-//			p.rotate(10);
-//			break;
-//		case 3:
-//			p.rotate(-10);
-//			break;
-//		default:
-//			break;
-//		}
+	public void mouseClicked(MouseEvent m) {
+//		b.addMove(new Position(m.getX(), m.getY()));
 	}
 
-	public void mouseEntered(MouseEvent arg0) {
+	public void mouseEntered(MouseEvent m) {
 
 	}
 
-	public void mouseExited(MouseEvent arg0) {
+	public void mouseExited(MouseEvent m) {
 
 	}
 
-	public void mousePressed(MouseEvent arg0) {
+	public void mousePressed(MouseEvent m) {
+		b.clearMoves();
+		d.setStart(m);
+		b.addMove(new Position(d.start));
+	}
+
+	public void mouseReleased(MouseEvent m) {
+		d.end();
+	}
+
+	public void mouseDragged(MouseEvent m) {
+		if (d.setCurr(m)) {
+			b.addMove(new Position(d.start));
+		}
 
 	}
 
-	public void mouseReleased(MouseEvent arg0) {
+	public void mouseMoved(MouseEvent m) {
 
 	}
 
