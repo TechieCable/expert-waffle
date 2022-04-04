@@ -1,14 +1,13 @@
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.util.ArrayList;
 
-public class Boat extends Picture {
+public class Boat extends RotatingPicture {
 	int speed;
 	double da;
 	ArrayList<Position> moves = new ArrayList<Position>();
 	Position target;
-	private double angle;
+	int cx, cy;
 
 	public Boat(int x, int y, String fileName) {
 		super(x, y, fileName, 1);
@@ -18,29 +17,23 @@ public class Boat extends Picture {
 	}
 
 	public void paint(Graphics g) {
-		width = img.getWidth(null) * scaleSize;
-		height = img.getHeight(null) * scaleSize;
+		cx = (int) (Math.cos(Math.PI * 2 - angle) * (width / 2) - Math.sin(Math.PI * 2 - angle) * (height / 2) + x);
+		cy = (int) (Math.cos(Math.PI * 2 - angle) * (width / 2) + Math.sin(Math.PI * 2 - angle) * (height / 2) + y);
 
 		speed = (int) (264 / height);
 		da = Math.PI / 72 * speed;
 
 		g.setColor(Color.WHITE);
 
-		g.drawRect(x - 5, y - 5, 10, 10);
+//		g.drawRect(x - 5, y - 5, 10, 10);
 
 		for (int i = 0; i < moves.size() - 1; i++) {
-//			g.drawRect(moves.get(i).x - 5, moves.get(i).y - 5, 10, 10);
 			g.drawLine(moves.get(i).x, moves.get(i).y, moves.get(i + 1).x, moves.get(i + 1).y);
 		}
 
-		move();
-		Graphics2D g2 = (Graphics2D) g;
-		g2.rotate(angle - Math.PI / 2, x + width / 2, y + height / 2);
-//		g2.rotate(angle - Math.PI / 2, x + width / 2, y + height / 2);
-		g2.drawImage(img, tx, null);
-		g2.setColor(Color.RED);
-		g2.drawRect(x, y, (int) (width), (int) (height));
-		update();
+		super.paint(g);
+
+		g.drawRect(cx - 5, cy - 5, 10, 10);
 	}
 
 	public void addMove(Position p) {
@@ -78,11 +71,12 @@ public class Boat extends Picture {
 	}
 
 	public void rotateTo(double angle) {
-		double diff = absMin(this.angle - angle, Math.PI * 2 - angle + this.angle);
+		double diff = absMin(absMin(this.angle - angle, Math.PI * 2 - angle + this.angle),
+				Math.PI * 2 + angle - this.angle);
 
-		System.out.print("angle=" + (int) (this.angle * 180 / Math.PI));
-		System.out.print(", tangle=" + (int) (angle * 180 / Math.PI));
-		System.out.println(", diff=" + (int) (diff * 180 / Math.PI));
+//		System.out.print("angle=" + (int) (this.angle * 180 / Math.PI));
+//		System.out.print(", tangle=" + (int) (angle * 180 / Math.PI));
+//		System.out.println(", diff=" + (int) (diff * 180 / Math.PI));
 
 		if (Math.abs(diff) <= this.da) {
 			return;

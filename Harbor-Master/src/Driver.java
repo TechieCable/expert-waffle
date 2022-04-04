@@ -17,19 +17,22 @@ import javax.swing.Timer;
 public class Driver extends JPanel implements ActionListener, KeyListener, MouseListener, MouseMotionListener {
 	public static int screenW = 1920, screenH = 1080;
 
-	Boat b = new Boat(500, 500, "boat4-0.png");
+	Boat b = new Boat(500, 500, "boat1-0.png");
 	ArrayList<Boat> boats = new ArrayList<Boat>();
 	CursorDrag d = new CursorDrag();
 	Map m = new Map("map1.png");
+	RotatingPicture x = new RotatingPicture(100, 100, "boat1-0.png", 1);
 
 	public void paint(Graphics g) {
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, screenW, screenH);
-		
+
 		m.paint(g);
 
 		b.paint(g);
+		x.paint(g);
 
+		System.out.println(x.angle * 180 / Math.PI);
 	}
 
 	public static void main(String[] arg) {

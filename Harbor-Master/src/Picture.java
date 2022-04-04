@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -138,5 +139,41 @@ public class Picture {
 
 	public double height() {
 		return height;
+	}
+}
+
+class RotatingPicture extends Picture {
+	protected double angle;
+
+	public RotatingPicture() {
+		super();
+	}
+
+	public RotatingPicture(int x, int y, String fileName, double scaleSize) {
+		super(x, y, fileName, scaleSize);
+	}
+
+	public void rotateTo(double angle) {
+		this.angle = angle;
+	}
+
+	public void paint(Graphics g) {
+		width = img.getWidth(null) * scaleSize;
+		height = img.getHeight(null) * scaleSize;
+		angle %= Math.PI * 2;
+
+		int cx = (int) (Math.cos(Math.PI * 2 - angle) * (width / 2) + Math.sin(Math.PI * 2 - angle) * (height / 2) + x);
+		int cy = (int) (Math.cos(Math.PI * 2 - angle) * (width / 2) + Math.sin(Math.PI * 2 - angle) * (height / 2) + y);
+
+		move();
+		Graphics2D g2 = (Graphics2D) g;
+		g2.rotate(angle - Math.PI / 2, x + width / 2, y + height / 2);
+		g2.drawImage(img, tx, null);
+		g2.setColor(Color.RED);
+		g2.drawRect(x, y, (int) (width), (int) (height));
+		g2.rotate(-(angle - Math.PI / 2), x + width / 2, y + height / 2);
+		update();
+
+		g.drawRect(cx - 5, cy - 5, 10, 10);
 	}
 }
