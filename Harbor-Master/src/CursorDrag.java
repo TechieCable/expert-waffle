@@ -32,6 +32,10 @@ public class CursorDrag {
 		curr = null;
 		dragging = false;
 	}
+	
+//	public Position midPoint(Position p) {
+//		
+//	}
 
 	public int distance() {
 		if (dragging == false) {
