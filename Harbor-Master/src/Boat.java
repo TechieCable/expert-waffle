@@ -7,7 +7,6 @@ public class Boat extends RotatingPicture {
 	double da;
 	ArrayList<Position> moves = new ArrayList<Position>();
 	Position target;
-	int cx, cy;
 
 	public Boat(int x, int y, String fileName) {
 		super(x, y, fileName, 1);
@@ -16,16 +15,19 @@ public class Boat extends RotatingPicture {
 		target = new Position(x, y);
 	}
 
-	public void paint(Graphics g) {
-		cx = (int) (Math.cos(Math.PI * 2 - angle) * (width / 2) - Math.sin(Math.PI * 2 - angle) * (height / 2) + x);
-		cy = (int) (Math.cos(Math.PI * 2 - angle) * (width / 2) + Math.sin(Math.PI * 2 - angle) * (height / 2) + y);
+	public int ax() {
+		return (int) (x + width / 2);
+	}
 
+	public int ay() {
+		return (int) (y + height / 2);
+	}
+
+	public void paint(Graphics g) {
 		speed = (int) (264 / height);
 		da = Math.PI / 72 * speed;
 
 		g.setColor(Color.WHITE);
-
-//		g.drawRect(x - 5, y - 5, 10, 10);
 
 		for (int i = 0; i < moves.size() - 1; i++) {
 			g.drawLine(moves.get(i).x, moves.get(i).y, moves.get(i + 1).x, moves.get(i + 1).y);
@@ -33,7 +35,7 @@ public class Boat extends RotatingPicture {
 
 		super.paint(g);
 
-		g.drawRect(cx - 5, cy - 5, 10, 10);
+		g.drawRect(ax() - 5, ay() - 5, 10, 10);
 	}
 
 	public void addMove(Position p) {
@@ -42,29 +44,29 @@ public class Boat extends RotatingPicture {
 
 	public void clearMoves() {
 		moves.clear();
-		target = new Position(x, y);
+		target = new Position(ax(), ay());
 	}
 
 	public void move() {
 		this.angle %= Math.PI * 2;
 		if (moves.size() > 0) {
-			if (target.distanceFrom(x, y) < 20) {
+			if (target.distanceFrom(ax(), ay()) < 20) {
 				try {
 					target = moves.remove(0);
 				} catch (Exception e) {
 				}
 			}
-			this.rotateTo(target.angle(x, y));
+			this.rotateTo(target.angle(ax(), ay()));
 		}
 
 		x += speed * Math.cos(angle);
 		y += speed * Math.sin(angle);
 
 		if (moves.size() == 0) {
-			if (x < 20 || x > Driver.screenW - 20) {
-				addMove(new Position(Driver.screenW / 2, y));
-			} else if (y < 20 || y > Driver.screenH - 40) {
-				addMove(new Position(x, Driver.screenH / 2));
+			if (ax() < 20 || ax() > Driver.screenW - 20) {
+				addMove(new Position(Driver.screenW / 2, ay()));
+			} else if (ay() < 20 || ay() > Driver.screenH - 40) {
+				addMove(new Position(ax(), Driver.screenH / 2));
 			}
 		}
 

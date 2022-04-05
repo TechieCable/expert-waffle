@@ -162,9 +162,6 @@ class RotatingPicture extends Picture {
 		height = img.getHeight(null) * scaleSize;
 		angle %= Math.PI * 2;
 
-		int cx = (int) (Math.cos(Math.PI * 2 - angle) * (width / 2) + Math.sin(Math.PI * 2 - angle) * (height / 2) + x);
-		int cy = (int) (Math.cos(Math.PI * 2 - angle) * (width / 2) + Math.sin(Math.PI * 2 - angle) * (height / 2) + y);
-
 		move();
 		Graphics2D g2 = (Graphics2D) g;
 		g2.rotate(angle - Math.PI / 2, x + width / 2, y + height / 2);
@@ -173,7 +170,5 @@ class RotatingPicture extends Picture {
 		g2.drawRect(x, y, (int) (width), (int) (height));
 		g2.rotate(-(angle - Math.PI / 2), x + width / 2, y + height / 2);
 		update();
-
-		g.drawRect(cx - 5, cy - 5, 10, 10);
 	}
 }

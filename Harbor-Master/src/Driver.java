@@ -21,7 +21,6 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 	ArrayList<Boat> boats = new ArrayList<Boat>();
 	CursorDrag d = new CursorDrag();
 	Map m = new Map("map1.png");
-	RotatingPicture x = new RotatingPicture(100, 100, "boat1-0.png", 1);
 
 	public void paint(Graphics g) {
 		g.setColor(Color.BLACK);
@@ -30,9 +29,6 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 		m.paint(g);
 
 		b.paint(g);
-		x.paint(g);
-
-		System.out.println(x.angle * 180 / Math.PI);
 	}
 
 	public static void main(String[] arg) {
