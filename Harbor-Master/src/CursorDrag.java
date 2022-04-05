@@ -5,6 +5,7 @@ public class CursorDrag {
 	Point start;
 	Point curr;
 	boolean dragging;
+	int activeBoatID;
 
 	public CursorDrag() {
 		start = new Point(-1, -1);
@@ -13,6 +14,7 @@ public class CursorDrag {
 	}
 
 	public void setStart(MouseEvent m) {
+		
 		start = m.getPoint();
 		curr = null;
 		dragging = true;
@@ -32,7 +34,7 @@ public class CursorDrag {
 		curr = null;
 		dragging = false;
 	}
-	
+
 //	public Position midPoint(Position p) {
 //		
 //	}

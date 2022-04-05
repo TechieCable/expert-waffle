@@ -1,5 +1,7 @@
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -16,6 +18,8 @@ import javax.swing.Timer;
 @SuppressWarnings("serial")
 public class Driver extends JPanel implements ActionListener, KeyListener, MouseListener, MouseMotionListener {
 	public static int screenW = 1920, screenH = 1080;
+
+	static Label stat;
 
 	Boat b = new Boat(500, 500, "boat1-0.png");
 	ArrayList<Boat> boats = new ArrayList<Boat>();
@@ -34,6 +38,7 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 	public static void main(String[] arg) {
 		@SuppressWarnings("unused")
 		Driver d = new Driver();
+
 	}
 
 	public Driver() {
@@ -53,10 +58,18 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 //		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 //		frame.setUndecorated(true);
 
+		frame.getContentPane().add(BorderLayout.NORTH, stat = new Label());
+
+		stat.setSize(frame.getSize().width, stat.getSize().height);
+
 		frame.setVisible(true);
 	}
 
 	public void generate() {
+	}
+
+	public void showStatus(String s) {
+		stat.setText(s);
 	}
 
 	Timer t = new Timer(16, this);
@@ -78,7 +91,8 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 	}
 
 	public void mouseClicked(MouseEvent m) {
-//		b.addMove(new Position(m.getX(), m.getY()));
+		// b.addMove(new Position(m.getX(), m.getY()));
+		System.out.println(m.getX() + " " + m.getY());
 	}
 
 	public void mouseEntered(MouseEvent m) {
@@ -100,6 +114,7 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 	}
 
 	public void mouseDragged(MouseEvent m) {
+
 		if (d.setCurr(m)) {
 			b.addMove(new Position(d.start));
 		}
@@ -107,7 +122,7 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 	}
 
 	public void mouseMoved(MouseEvent m) {
-
+		showStatus(m.getPoint() + "");
 	}
 
 }

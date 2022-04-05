@@ -100,4 +100,12 @@ public class Boat extends RotatingPicture {
 		return min;
 	}
 
+	public static double eqvAngle(double a) {
+		while (a < 0)
+			a += Math.PI * 2;
+		while (a > Math.PI * 2)
+			a %= Math.PI * 2;
+		return a;
+	}
+
 }
