@@ -51,7 +51,7 @@ class BoundaryPoint extends Point {
 	// 1: northeast
 	// 2: southeast
 	// 3: southwest
-	// 4: northeast
+	// 4: northwest
 	int direction;
 
 	public BoundaryPoint(int x, int y, int direction) {

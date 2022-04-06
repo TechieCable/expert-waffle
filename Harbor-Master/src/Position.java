@@ -15,7 +15,11 @@ public class Position extends Point {
 	}
 
 	public double angle(int x, int y) {
-		return Math.atan2(x - this.x, this.y - y) + Math.PI / 2;
+		double angle = Math.atan2(x - this.x, this.y - y) + Math.PI / 2;
+		if (angle < 0)
+			angle += Math.PI * 2;
+		angle %= Math.PI * 2;
+		return angle;
 	}
 
 	public double angle(Position p) {

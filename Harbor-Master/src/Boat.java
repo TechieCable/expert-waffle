@@ -9,7 +9,7 @@ public class Boat extends RotatingPicture {
 	Position target;
 
 	public Boat(int x, int y, String fileName) {
-		super(x, y, fileName, 1);
+		super(x, y, fileName, 1.6);
 		speed = 4;
 		da = Math.PI / 72 * speed;
 		target = new Position(x, y);
@@ -23,8 +23,33 @@ public class Boat extends RotatingPicture {
 		return (int) (y + height / 2);
 	}
 
+	/**
+	 * 
+	 * @return direction
+	 */
+	public int facing() {
+		// 1: northeast
+		// 2: southeast
+		// 3: southwest
+		// 4: northwest
+
+		if (angle > Math.PI) { // north
+			if (angle < Math.PI * 3 / 2) {
+				return 4;
+			} else {
+				return 1;
+			}
+		} else { // south
+			if (angle < Math.PI / 2) {
+				return 2;
+			} else {
+				return 3;
+			}
+		}
+	}
+
 	public void paint(Graphics g) {
-		speed = (int) (264 / height);
+		speed = (int) ((264 * scaleSize) / height);
 		da = Math.PI / 72 * speed;
 
 		g.setColor(Color.WHITE);
@@ -49,6 +74,7 @@ public class Boat extends RotatingPicture {
 
 	public void move() {
 		this.angle %= Math.PI * 2;
+
 		if (moves.size() > 0) {
 			if (target.distanceFrom(ax(), ay()) < 20) {
 				try {
@@ -76,10 +102,6 @@ public class Boat extends RotatingPicture {
 		double diff = absMin(absMin(this.angle - angle, Math.PI * 2 - angle + this.angle),
 				Math.PI * 2 + angle - this.angle);
 
-//		System.out.print("angle=" + (int) (this.angle * 180 / Math.PI));
-//		System.out.print(", tangle=" + (int) (angle * 180 / Math.PI));
-//		System.out.println(", diff=" + (int) (diff * 180 / Math.PI));
-
 		if (Math.abs(diff) <= this.da) {
 			return;
 		} else if (diff > 0) {
@@ -98,14 +120,6 @@ public class Boat extends RotatingPicture {
 			return min * Math.abs(b) / b;
 		}
 		return min;
-	}
-
-	public static double eqvAngle(double a) {
-		while (a < 0)
-			a += Math.PI * 2;
-		while (a > Math.PI * 2)
-			a %= Math.PI * 2;
-		return a;
 	}
 
 }

@@ -55,7 +55,7 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 
 		generate();
 
-//		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 //		frame.setUndecorated(true);
 
 		frame.getContentPane().add(BorderLayout.NORTH, stat = new Label());
