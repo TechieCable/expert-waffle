@@ -14,7 +14,7 @@ public class CursorDrag {
 	}
 
 	public void setStart(MouseEvent m) {
-		
+
 		start = m.getPoint();
 		curr = null;
 		dragging = true;

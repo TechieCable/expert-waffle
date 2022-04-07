@@ -8,11 +8,17 @@ public class Boat extends RotatingPicture {
 	ArrayList<Position> moves = new ArrayList<Position>();
 	Position target;
 
+	public Boat() {
+		this((int) (Math.random() * (Driver.screenW - 20 - 20 + 1)) + 20,
+				(int) (Math.random() * (Driver.screenH - 20 - 20 + 1)) + 20, "boat1-0.png");
+	}
+
 	public Boat(int x, int y, String fileName) {
-		super(x, y, fileName, 1.6);
+		super(x, y, fileName, 1.4);
 		speed = 4;
 		da = Math.PI / 72 * speed;
-		target = new Position(x, y);
+		target = new Position(ax(), ay());
+
 	}
 
 	public int ax() {
@@ -29,23 +35,27 @@ public class Boat extends RotatingPicture {
 	 */
 	public int facing() {
 		// 1: northeast
-		// 2: southeast
+		// 2: northwest
 		// 3: southwest
-		// 4: northwest
+		// 4: southeast
 
 		if (angle > Math.PI) { // north
-			if (angle < Math.PI * 3 / 2) {
-				return 4;
-			} else {
+			if (angle < Math.PI * 3 / 2) { // northwest
+				return 2;
+			} else { // northeast
 				return 1;
 			}
 		} else { // south
-			if (angle < Math.PI / 2) {
-				return 2;
-			} else {
+			if (angle < Math.PI / 2) { // southeast
+				return 4;
+			} else { // southwest
 				return 3;
 			}
 		}
+	}
+
+	public boolean clicked(int x, int y) {
+		return (x > this.x && y > this.y && x < this.x + this.width && y < this.y + this.height);
 	}
 
 	public void paint(Graphics g) {
@@ -59,8 +69,6 @@ public class Boat extends RotatingPicture {
 		}
 
 		super.paint(g);
-
-		g.drawRect(ax() - 5, ay() - 5, 10, 10);
 	}
 
 	public void addMove(Position p) {

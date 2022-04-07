@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -21,10 +22,10 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 
 	static Label stat;
 
-	Boat b = new Boat(500, 500, "boat1-0.png");
+//	Boat b = new Boat(500, 500, "boat1-0.png");
 	ArrayList<Boat> boats = new ArrayList<Boat>();
 	CursorDrag d = new CursorDrag();
-	Map m = new Map("map1.png");
+	Map m = new Map("map1.png", "map1.txt");
 
 	public void paint(Graphics g) {
 		g.setColor(Color.BLACK);
@@ -32,7 +33,15 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 
 		m.paint(g);
 
-		b.paint(g);
+//		b.paint(g);
+
+		for (int i = 0; i < boats.size(); i++) {
+			if (m.overLand(boats.get(i))) {
+				System.out.println("boat on land!");
+			}
+			boats.get(i).paint(g);
+		}
+
 	}
 
 	public static void main(String[] arg) {
@@ -51,21 +60,22 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 		frame.addKeyListener(this);
 		frame.addMouseListener(this);
 		frame.addMouseMotionListener(this);
+		frame.getContentPane().add(BorderLayout.NORTH, stat = new Label());
+		stat.setSize(frame.getSize().width, stat.getSize().height);
 		t.start();
-
-		generate();
 
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 //		frame.setUndecorated(true);
 
-		frame.getContentPane().add(BorderLayout.NORTH, stat = new Label());
-
-		stat.setSize(frame.getSize().width, stat.getSize().height);
+		generate();
 
 		frame.setVisible(true);
 	}
 
 	public void generate() {
+		for (int i = 0; i < 20; i++) {
+			boats.add(new Boat());
+		}
 	}
 
 	public void showStatus(String s) {
@@ -92,7 +102,6 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 
 	public void mouseClicked(MouseEvent m) {
 		// b.addMove(new Position(m.getX(), m.getY()));
-		System.out.println(m.getX() + " " + m.getY());
 	}
 
 	public void mouseEntered(MouseEvent m) {
@@ -104,9 +113,14 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 	}
 
 	public void mousePressed(MouseEvent m) {
-		b.clearMoves();
-		d.setStart(m);
-		b.addMove(new Position(d.start));
+		for (int i = 0; i < boats.size(); i++) {
+			if (boats.get(i).clicked(m.getX(), m.getY())) {
+				boats.get(i).clearMoves();
+				d.setStart(m);
+				d.activeBoatID = i;
+				boats.get(i).addMove(new Position(d.start));
+			}
+		}
 	}
 
 	public void mouseReleased(MouseEvent m) {
@@ -114,9 +128,8 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 	}
 
 	public void mouseDragged(MouseEvent m) {
-
 		if (d.setCurr(m)) {
-			b.addMove(new Position(d.start));
+			boats.get(d.activeBoatID).addMove(new Position(d.start));
 		}
 
 	}
