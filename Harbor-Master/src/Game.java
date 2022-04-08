@@ -15,7 +15,12 @@ public class Game {
 		m.paint(g);
 
 		for (int i = 0; i < boats.size(); i++) {
-			boats.get(i).paint(g);
+			Boat b = boats.get(i);
+			if (m.overLand(b)) {
+				b.clearMoves();
+				b.addMove(new Position(Driver.screenW / 2, Driver.screenH / 2));
+			}
+			b.paint(g);
 		}
 	}
 

@@ -35,7 +35,8 @@ public class Map extends Picture {
 	}
 
 	public boolean overLand(int x, int y) {
-		return sectors.containsKey((x / Sector.width) + "" + (y / Sector.width));
+		String cX = (x / Sector.width) + "", cY = (y / Sector.width) + "";
+		return sectors.containsKey("00".substring(cX.length()) + cX + "" + "00".substring(cY.length()) + cY);
 	}
 
 	public boolean overLand(Boat b) {
