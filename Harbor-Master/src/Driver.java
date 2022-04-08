@@ -1,7 +1,10 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Label;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -9,9 +12,11 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -21,25 +26,25 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 	public static int screenW = 1920, screenH = 1080;
 
 	static Label stat;
-
-//	Boat b = new Boat(500, 500, "boat1-0.png");
-	ArrayList<Boat> boats = new ArrayList<Boat>();
-	CursorDrag d = new CursorDrag();
-	Map m = new Map("map1.png", "map1.txt");
+	Game game;
+	Picture title1 = new Picture(0, 0, "Title.png", 1);
+	Picture title2 = new Picture(0, 0, "Title_Highlighted.png", 1);
+	boolean playing = true;
+	boolean paused = false;
+	boolean titleHover = false;
 
 	public void paint(Graphics g) {
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, screenW, screenH);
 
-		m.paint(g);
-
-//		b.paint(g);
-
-		for (int i = 0; i < boats.size(); i++) {
-			if (m.overLand(boats.get(i))) {
-				System.out.println("boat on land!");
+		if (playing) {
+			game.paint(g);
+		} else {
+			if (!titleHover) {
+				title1.paint(g);
+			} else {
+				title2.paint(g);
 			}
-			boats.get(i).paint(g);
 		}
 
 	}
@@ -53,7 +58,7 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 	public Driver() {
 		JFrame frame = new JFrame("Harbor Master");
 		// TODO: add icon image
-//		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(""));
+		// frame.setIconImage(Toolkit.getDefaultToolkit().getImage(""));
 		frame.setSize(screenW, screenH);
 		frame.add(this);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -65,20 +70,28 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 		t.start();
 
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-//		frame.setUndecorated(true);
+		// frame.setUndecorated(true);
 
 		generate();
 
 		frame.setVisible(true);
+
+		BufferedImage cursorImg;
+		try {
+			cursorImg = ImageIO.read(new File("Cursor.png"));
+			Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, 0),
+					"blank cursor");
+			frame.getContentPane().setCursor(blankCursor);
+		} catch (IOException e) {
+		}
+
 	}
 
 	public void generate() {
-		for (int i = 0; i < 20; i++) {
-			boats.add(new Boat());
-		}
+		game = new Game();
 	}
 
-	public void showStatus(String s) {
+	public void setStatus(String s) {
 		stat.setText(s);
 	}
 
@@ -101,41 +114,38 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 	}
 
 	public void mouseClicked(MouseEvent m) {
-		// b.addMove(new Position(m.getX(), m.getY()));
+		if (!playing && m.getX() > 805 && m.getY() > 770 && m.getX() < 1275 && m.getY() < 980) {
+			playing = true;
+		}
 	}
 
 	public void mouseEntered(MouseEvent m) {
-
+		paused = false;
 	}
 
 	public void mouseExited(MouseEvent m) {
-
+		paused = true;
 	}
 
 	public void mousePressed(MouseEvent m) {
-		for (int i = 0; i < boats.size(); i++) {
-			if (boats.get(i).clicked(m.getX(), m.getY())) {
-				boats.get(i).clearMoves();
-				d.setStart(m);
-				d.activeBoatID = i;
-				boats.get(i).addMove(new Position(d.start));
-			}
-		}
+		game.boatClickHandler(m);
 	}
 
 	public void mouseReleased(MouseEvent m) {
-		d.end();
+		game.cursorDrag.end();
 	}
 
 	public void mouseDragged(MouseEvent m) {
-		if (d.setCurr(m)) {
-			boats.get(d.activeBoatID).addMove(new Position(d.start));
-		}
-
+		game.boatDragHandler(m);
 	}
 
 	public void mouseMoved(MouseEvent m) {
-		showStatus(m.getPoint() + "");
+		if (!playing && m.getX() > 805 && m.getY() > 770 && m.getX() < 1275 && m.getY() < 980) {
+			titleHover = true;
+		} else {
+			titleHover = false;
+		}
+		setStatus(m.getPoint() + "");
 	}
 
 }

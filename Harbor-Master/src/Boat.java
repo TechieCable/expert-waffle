@@ -18,7 +18,6 @@ public class Boat extends RotatingPicture {
 		speed = 4;
 		da = Math.PI / 72 * speed;
 		target = new Position(ax(), ay());
-
 	}
 
 	public int ax() {
@@ -55,7 +54,7 @@ public class Boat extends RotatingPicture {
 	}
 
 	public boolean clicked(int x, int y) {
-		return (x > this.x && y > this.y && x < this.x + this.width && y < this.y + this.height);
+		return (x > ax() - this.width && y > ay() - this.width && x < ax() + this.width && y < ay() + this.width);
 	}
 
 	public void paint(Graphics g) {
@@ -69,6 +68,9 @@ public class Boat extends RotatingPicture {
 		}
 
 		super.paint(g);
+		g.setColor(Color.RED);
+		g.drawRect((int) (ax() - this.width), (int) (ay() - this.width), (int) (this.width * 2),
+				(int) (this.width * 2));
 	}
 
 	public void addMove(Position p) {

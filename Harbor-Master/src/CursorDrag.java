@@ -41,8 +41,7 @@ public class CursorDrag {
 
 	public int distance() {
 		if (dragging == false) {
-			System.err.println("attempted to find distance while not dragging");
-			return 0;
+			return -1;
 		}
 		return (int) Math.sqrt(Math.pow(start.x - curr.x, 2) + Math.pow(start.y - curr.y, 2));
 	}
