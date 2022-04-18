@@ -7,6 +7,7 @@ public class Boat extends RotatingPicture {
 	double da;
 	ArrayList<Position> moves = new ArrayList<Position>();
 	Position target;
+	int checkTime;
 
 	public Boat() {
 		this((int) (Math.random() * (Driver.screenW - 20 - 20 + 1)) + 20,
@@ -64,6 +65,7 @@ public class Boat extends RotatingPicture {
 		g.setColor(Color.WHITE);
 
 		for (int i = 0; i < moves.size() - 1; i++) {
+			g.drawRect(moves.get(i).x - 5, moves.get(i).y - 5, 10, 10);
 			g.drawLine(moves.get(i).x, moves.get(i).y, moves.get(i + 1).x, moves.get(i + 1).y);
 		}
 
@@ -83,6 +85,10 @@ public class Boat extends RotatingPicture {
 	}
 
 	public void move() {
+		if (checkTime > 0) {
+			checkTime--;
+		}
+
 		this.angle %= Math.PI * 2;
 
 		if (moves.size() > 0) {

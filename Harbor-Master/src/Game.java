@@ -16,9 +16,10 @@ public class Game {
 
 		for (int i = 0; i < boats.size(); i++) {
 			Boat b = boats.get(i);
-			if (m.overLand(b)) {
+			if (b.checkTime == 0 && m.overLand(b)) {
 				b.clearMoves();
-				b.addMove(new Position(Driver.screenW / 2, Driver.screenH / 2));
+				b.angle += Math.PI;
+				b.checkTime = 100;
 			}
 			b.paint(g);
 		}
@@ -29,7 +30,7 @@ public class Game {
 		cursorDrag = new CursorDrag();
 		m = new Map("map1.png", "map1.txt");
 
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 1; i++) {
 			boats.add(new Boat());
 		}
 	}
