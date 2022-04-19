@@ -33,6 +33,7 @@ public class Map extends Picture {
 
 	public void paint(Graphics g) {
 		super.paint(g);
+
 //		for (HashMap.Entry<String, Sector> s : sectors.entrySet()) {
 //			int[] cors = cors(s.getKey());
 //			g.fillRect(cors[0] * Sector.width, cors[1] * Sector.width, Sector.width, Sector.width);
@@ -53,19 +54,6 @@ public class Map extends Picture {
 		return overLand((int) (b.ax() - b.height), (int) (b.ay() - b.height))
 				|| overLand((int) (b.ax() + b.height), (int) (b.ay() + b.height));
 	}
-
-//	public Position closest(Boat b) {
-//		double minDistance = checkPoints.get(0).distanceFrom(b.x, b.y);
-//		Position min = checkPoints.get(0);
-//		for (int i = 0; i < checkPoints.size(); i++) {
-//			double distance = checkPoints.get(i).distanceFrom(b.x, b.y);
-//			if (distance < minDistance) {
-//				minDistance = distance;
-//				min = checkPoints.get(i);
-//			}
-//		}
-//		return min;
-//	}
 
 }
 

@@ -65,7 +65,7 @@ public class Boat extends RotatingPicture {
 		g.setColor(Color.WHITE);
 
 		for (int i = 0; i < moves.size() - 1; i++) {
-			g.drawRect(moves.get(i).x - 5, moves.get(i).y - 5, 10, 10);
+			// g.drawRect(moves.get(i).x - 5, moves.get(i).y - 5, 10, 10);
 			g.drawLine(moves.get(i).x, moves.get(i).y, moves.get(i + 1).x, moves.get(i + 1).y);
 		}
 

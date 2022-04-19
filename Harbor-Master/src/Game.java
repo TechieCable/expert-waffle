@@ -19,7 +19,7 @@ public class Game {
 			if (b.checkTime == 0 && m.overLand(b)) {
 				b.clearMoves();
 				b.angle += Math.PI;
-				b.checkTime = 100;
+				b.checkTime = 50;
 			}
 			b.paint(g);
 		}
