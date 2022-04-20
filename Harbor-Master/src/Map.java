@@ -24,7 +24,9 @@ public class Map extends Picture {
 					continue;
 				}
 				String c = s.next();
-				sectors.put(Sector.z.substring(r.length()) + r + Sector.z.substring(c.length()) + c, new Sector(r, c));
+				String d = s.next();
+				sectors.put(Sector.z.substring(r.length()) + r + Sector.z.substring(c.length()) + c,
+						new Sector(r, c, d));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -34,10 +36,11 @@ public class Map extends Picture {
 	public void paint(Graphics g) {
 		super.paint(g);
 
-//		for (HashMap.Entry<String, Sector> s : sectors.entrySet()) {
-//			int[] cors = cors(s.getKey());
-//			g.fillRect(cors[0] * Sector.width, cors[1] * Sector.width, Sector.width, Sector.width);
-//		}
+		for (HashMap.Entry<String, Sector> s : sectors.entrySet()) {
+			int[] cors = cors(s.getKey());
+			g.fillRect(cors[0] * Sector.width, cors[1] * Sector.width, Sector.width, Sector.width);
+			g.drawOval(cors[0] * Sector.width, cors[1] * Sector.width, Sector.width, Sector.width);
+		}
 	}
 
 	public int[] cors(String s) {
@@ -62,12 +65,19 @@ class Sector extends Point {
 	static int width = 20;
 	static String z = "000";
 
-	public Sector(int x, int y) {
+	// 1: northeast
+	// 2: northwest
+	// 3: southwest
+	// 4: southeast
+	public int redirection;
+
+	public Sector(int x, int y, int redirection) {
 		super(x, y);
+		this.redirection = redirection;
 	}
 
-	public Sector(String a, String b) {
-		this(Integer.valueOf(a), Integer.valueOf(b));
+	public Sector(String a, String b, String c) {
+		this(Integer.valueOf(a), Integer.valueOf(b), Integer.valueOf(c));
 	}
 
 	public boolean over(int x, int y) {
