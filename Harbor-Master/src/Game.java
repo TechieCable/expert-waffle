@@ -16,10 +16,22 @@ public class Game {
 
 		for (int i = 0; i < boats.size(); i++) {
 			Boat b = boats.get(i);
-			if (b.checkTime == 0 && m.overLand(b)) {
-				b.clearMoves();
-				b.angle += Math.PI;
-				b.checkTime = 50;
+			if (b.checkTime == 0) {
+				Sector over = m.overLand(b);
+				if (over != null) {
+					b.clearMoves();
+					System.out.println("hello!");
+					if (over.redirection == 1) {
+						b.addMove(new Position(b.ax() + 50, b.ay() - 50));
+					} else if (over.redirection == 2) {
+						b.addMove(new Position(b.ax() - 50, b.ay() - 50));
+					} else if (over.redirection == 3) {
+						b.addMove(new Position(b.ax() - 50, b.ay() + 50));
+					} else if (over.redirection == 4) {
+						b.addMove(new Position(b.ax() + 50, b.ay() + 50));
+					}
+					b.checkTime = 50;
+				}
 			}
 			b.paint(g);
 		}

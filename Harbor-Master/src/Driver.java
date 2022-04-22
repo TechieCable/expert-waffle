@@ -71,12 +71,12 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 		frame.addKeyListener(this);
 		frame.addMouseListener(this);
 		frame.addMouseMotionListener(this);
-		frame.getContentPane().add(BorderLayout.NORTH, stat = new Label());
-		stat.setSize(frame.getSize().width, stat.getSize().height);
+//		frame.getContentPane().add(BorderLayout.NORTH, stat = new Label());
+//		stat.setSize(frame.getSize().width, stat.getSize().height);
 		t.start();
 
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-		// frame.setUndecorated(true);
+		frame.setUndecorated(true);
 
 		generate();
 
@@ -98,7 +98,7 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 	}
 
 	public void setStatus(String s) {
-		stat.setText(s);
+//		stat.setText(s);
 	}
 
 	Timer t = new Timer(16, this);
@@ -120,13 +120,13 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 	}
 
 	public void mouseClicked(MouseEvent m) {
-//		String r = (m.getX() + 10) / Sector.width + "";
-//		String c = (m.getY() - 100) / Sector.width + "";
+//		String x = (m.getX() + 10) / Sector.width + "";
+//		String y = (m.getY() + 10) / Sector.width + "";
 //		if (m.getButton() == 1) {
-//			game.m.sectors.put(Sector.z.substring(r.length()) + r + Sector.z.substring(c.length()) + c,
-//					new Sector(r, c));
+//			game.m.sectors.put(Sector.z.substring(x.length()) + x + Sector.z.substring(y.length()) + y,
+//					new Sector(x, y, "0"));
 //		} else {
-//			game.m.sectors.remove(Sector.z.substring(r.length()) + r + Sector.z.substring(c.length()) + c);
+//			game.m.sectors.remove(Sector.z.substring(x.length()) + x + Sector.z.substring(y.length()) + y);
 //		}
 
 		if (!playing && m.getX() > 805 && m.getY() > 770 && m.getX() < 1275 && m.getY() < 980) {

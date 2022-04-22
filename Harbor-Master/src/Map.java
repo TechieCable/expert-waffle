@@ -16,17 +16,17 @@ public class Map extends Picture {
 			Scanner s = new Scanner(new File(Map.class.getResource("/map-sectors/" + sectorFileName).getPath()));
 
 			while (s.hasNextLine()) {
-				String r = s.next();
-				if (r.equals("d")) {
-					r = s.next();
-					String c = s.next();
-					dockPoints.add(new Position(Integer.valueOf(r), Integer.valueOf(c)));
+				String x = s.next();
+				if (x.equals("d")) {
+					x = s.next();
+					String y = s.next();
+					dockPoints.add(new Position(Integer.valueOf(x), Integer.valueOf(y)));
 					continue;
 				}
-				String c = s.next();
+				String y = s.next();
 				String d = s.next();
-				sectors.put(Sector.z.substring(r.length()) + r + Sector.z.substring(c.length()) + c,
-						new Sector(r, c, d));
+				sectors.put(Sector.z.substring(x.length()) + x + Sector.z.substring(y.length()) + y,
+						new Sector(x, y, d));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -48,14 +48,18 @@ public class Map extends Picture {
 				Integer.valueOf(s.substring(Sector.z.length())) };
 	}
 
-	public boolean overLand(int x, int y) {
+	public Sector overLand(int x, int y) {
 		String cX = (x / Sector.width) + "", cY = (y / Sector.width) + "";
-		return sectors.containsKey(Sector.z.substring(cX.length()) + cX + "" + Sector.z.substring(cY.length()) + cY);
+		return sectors.get(Sector.z.substring(cX.length()) + cX + "" + Sector.z.substring(cY.length()) + cY);
 	}
 
-	public boolean overLand(Boat b) {
-		return overLand((int) (b.ax() - b.height), (int) (b.ay() - b.height))
-				|| overLand((int) (b.ax() + b.height), (int) (b.ay() + b.height));
+	public Sector overLand(Boat b) {
+		Sector first = overLand((int) (b.ax() - b.height), (int) (b.ay() - b.height));
+		if (first != null) {
+			return first;
+		} else {
+			return overLand((int) (b.ax() + b.height), (int) (b.ay() + b.height));
+		}
 	}
 
 }
