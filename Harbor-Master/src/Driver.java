@@ -71,8 +71,8 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 		frame.addKeyListener(this);
 		frame.addMouseListener(this);
 		frame.addMouseMotionListener(this);
-//		frame.getContentPane().add(BorderLayout.NORTH, stat = new Label());
-//		stat.setSize(frame.getSize().width, stat.getSize().height);
+		frame.getContentPane().add(BorderLayout.NORTH, stat = new Label());
+		stat.setSize(frame.getSize().width, stat.getSize().height);
 		t.start();
 
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -97,8 +97,8 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 		game = new Game();
 	}
 
-	public void setStatus(String s) {
-//		stat.setText(s);
+	public static void setStatus(String s) {
+		stat.setText(s);
 	}
 
 	Timer t = new Timer(16, this);

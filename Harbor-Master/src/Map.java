@@ -3,11 +3,12 @@ import java.awt.Point;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Scanner;
 
 public class Map extends Picture {
-	HashMap<String, Sector> sectors = new HashMap<String, Sector>();
-	ArrayList<Position> dockPoints = new ArrayList<Position>();
+	HashMap<String, LandSector> sectors = new HashMap<String, LandSector>();
+	ArrayList<DockSector> dockPoints = new ArrayList<DockSector>();
 
 	public Map(String fileName, String sectorFileName) {
 		super(0, 0, fileName, 1);
@@ -17,16 +18,18 @@ public class Map extends Picture {
 
 			while (s.hasNextLine()) {
 				String x = s.next();
+				if (x.equals("/")) {
+					s.nextLine();
+					continue;
+				}
 				if (x.equals("d")) {
-					x = s.next();
-					String y = s.next();
-					dockPoints.add(new Position(Integer.valueOf(x), Integer.valueOf(y)));
+					dockPoints.add(new DockSector(s.next(), s.next(), s.next(), s.next(), s.next()));
 					continue;
 				}
 				String y = s.next();
 				String d = s.next();
 				sectors.put(Sector.z.substring(x.length()) + x + Sector.z.substring(y.length()) + y,
-						new Sector(x, y, d));
+						new LandSector(x, y, d));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -36,10 +39,12 @@ public class Map extends Picture {
 	public void paint(Graphics g) {
 		super.paint(g);
 
-		for (HashMap.Entry<String, Sector> s : sectors.entrySet()) {
-			int[] cors = cors(s.getKey());
-			g.fillRect(cors[0] * Sector.width, cors[1] * Sector.width, Sector.width, Sector.width);
-			g.drawOval(cors[0] * Sector.width, cors[1] * Sector.width, Sector.width, Sector.width);
+//		for (Entry<String, LandSector> s : sectors.entrySet()) {
+//			int[] cors = cors(s.getKey());
+//			g.fillRect(cors[0] * Sector.width, cors[1] * Sector.width, Sector.width, Sector.width);
+//		}
+		for (DockSector x : dockPoints) {
+			g.fillRect(x.x - Sector.width / 2, x.y - Sector.width / 2, Sector.width, Sector.width);
 		}
 	}
 
@@ -48,13 +53,13 @@ public class Map extends Picture {
 				Integer.valueOf(s.substring(Sector.z.length())) };
 	}
 
-	public Sector overLand(int x, int y) {
+	public LandSector overLand(int x, int y) {
 		String cX = (x / Sector.width) + "", cY = (y / Sector.width) + "";
 		return sectors.get(Sector.z.substring(cX.length()) + cX + "" + Sector.z.substring(cY.length()) + cY);
 	}
 
-	public Sector overLand(Boat b) {
-		Sector first = overLand((int) (b.ax() - b.height), (int) (b.ay() - b.height));
+	public LandSector overLand(Boat b) {
+		LandSector first = overLand((int) (b.ax() - b.height), (int) (b.ay() - b.height));
 		if (first != null) {
 			return first;
 		} else {
@@ -65,23 +70,16 @@ public class Map extends Picture {
 }
 
 @SuppressWarnings("serial")
-class Sector extends Point {
+class Sector extends Position {
 	static int width = 20;
 	static String z = "000";
 
-	// 1: northeast
-	// 2: northwest
-	// 3: southwest
-	// 4: southeast
-	public int redirection;
-
-	public Sector(int x, int y, int redirection) {
+	public Sector(int x, int y) {
 		super(x, y);
-		this.redirection = redirection;
 	}
 
-	public Sector(String a, String b, String c) {
-		this(Integer.valueOf(a), Integer.valueOf(b), Integer.valueOf(c));
+	public Sector(String a, String b) {
+		this(Integer.valueOf(a), Integer.valueOf(b));
 	}
 
 	public boolean over(int x, int y) {
@@ -90,4 +88,40 @@ class Sector extends Point {
 		}
 		return false;
 	}
+}
+
+@SuppressWarnings("serial")
+class DockSector extends Sector {
+	int dockX, dockY;
+	double angle;
+
+	public DockSector(String a, String b, String c, String d, String e) {
+		super(a, b);
+		dockX = Integer.valueOf(c);
+		dockY = Integer.valueOf(d);
+		angle = Integer.valueOf(e) * Math.PI / 180;
+	}
+
+	public DockSector dock(Boat b) {
+		if (distanceFrom(b.ax(), b.ay()) < 50) {
+			return this;
+		}
+		return null;
+	}
+
+}
+
+@SuppressWarnings("serial")
+class LandSector extends Sector {
+	// 1: northeast
+	// 2: northwest
+	// 3: southwest
+	// 4: southeast
+	public int redirection;
+
+	public LandSector(String a, String b, String c) {
+		super(a, b);
+		this.redirection = Integer.valueOf(c);
+	}
+
 }

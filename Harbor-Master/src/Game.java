@@ -1,4 +1,5 @@
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
@@ -16,19 +17,37 @@ public class Game {
 
 		for (int i = 0; i < boats.size(); i++) {
 			Boat b = boats.get(i);
+
+			// dock checks
+			for (DockSector x : m.dockPoints) {
+				DockSector dock = x.dock(b);
+				if (dock != null) {
+					b.clearMoves();
+					b.x = dock.dockX;
+					b.y = dock.dockY;
+					b.angle = dock.angle;
+					b.docked = true;
+				}
+			}
+
 			if (b.checkTime == 0) {
-				Sector over = m.overLand(b);
+				// land checks
+				LandSector over = m.overLand(b);
 				if (over != null) {
 					b.clearMoves();
-					System.out.println("hello!");
+					int dist = 200;
 					if (over.redirection == 1) {
-						b.addMove(new Position(b.ax() + 50, b.ay() - 50));
+						b.addMove(new Position(b.ax() + dist, b.ay() - dist));
+						b.addMove(new Position(b.ax() + (dist + 20), b.ay() - (dist + 20)));
 					} else if (over.redirection == 2) {
-						b.addMove(new Position(b.ax() - 50, b.ay() - 50));
+						b.addMove(new Position(b.ax() - dist, b.ay() - dist));
+						b.addMove(new Position(b.ax() - (dist + 20), b.ay() - (dist + 20)));
 					} else if (over.redirection == 3) {
-						b.addMove(new Position(b.ax() - 50, b.ay() + 50));
+						b.addMove(new Position(b.ax() - dist, b.ay() + dist));
+						b.addMove(new Position(b.ax() - (dist + 20), b.ay() + (dist + 20)));
 					} else if (over.redirection == 4) {
-						b.addMove(new Position(b.ax() + 50, b.ay() + 50));
+						b.addMove(new Position(b.ax() + dist, b.ay() + dist));
+						b.addMove(new Position(b.ax() + (dist + 20), b.ay() + (dist + 20)));
 					}
 					b.checkTime = 50;
 				}
