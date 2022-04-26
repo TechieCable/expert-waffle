@@ -1,5 +1,4 @@
 import java.awt.Graphics;
-import java.awt.Point;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,6 +8,7 @@ import java.util.Scanner;
 public class Map extends Picture {
 	HashMap<String, LandSector> sectors = new HashMap<String, LandSector>();
 	ArrayList<DockSector> dockPoints = new ArrayList<DockSector>();
+	ArrayList<EntrySector> entryPoints = new ArrayList<EntrySector>();
 
 	public Map(String fileName, String sectorFileName) {
 		super(0, 0, fileName, 1);
@@ -24,6 +24,10 @@ public class Map extends Picture {
 				}
 				if (x.equals("d")) {
 					dockPoints.add(new DockSector(s.next(), s.next(), s.next(), s.next(), s.next()));
+					continue;
+				}
+				if (x.equals("e")) {
+					entryPoints.add(new EntrySector(s.next(), s.next()));
 					continue;
 				}
 				String y = s.next();
@@ -46,6 +50,9 @@ public class Map extends Picture {
 		for (DockSector x : dockPoints) {
 			g.fillRect(x.x - Sector.width / 2, x.y - Sector.width / 2, Sector.width, Sector.width);
 		}
+		for (EntrySector x : entryPoints) {
+			g.fillRect(x.x - Sector.width / 2, x.y - Sector.width / 2, Sector.width, Sector.width);
+		}
 	}
 
 	public int[] cors(String s) {
@@ -65,6 +72,10 @@ public class Map extends Picture {
 		} else {
 			return overLand((int) (b.ax() + b.height), (int) (b.ay() + b.height));
 		}
+	}
+
+	public EntrySector randomEntry() {
+		return entryPoints.get((int) (Math.random() * entryPoints.size()));
 	}
 
 }
@@ -122,6 +133,14 @@ class LandSector extends Sector {
 	public LandSector(String a, String b, String c) {
 		super(a, b);
 		this.redirection = Integer.valueOf(c);
+	}
+
+}
+
+@SuppressWarnings("serial")
+class EntrySector extends Sector {
+	public EntrySector(String a, String b) {
+		super(a, b);
 	}
 
 }

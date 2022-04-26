@@ -1,9 +1,10 @@
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 public class Boat extends RotatingPicture {
+	static final int startTime = 200;
+
 	int speed;
 	double da;
 	ArrayList<Position> moves = new ArrayList<Position>();
@@ -21,7 +22,15 @@ public class Boat extends RotatingPicture {
 		speed = 4;
 		da = Math.PI / 72 * speed;
 		target = new Position(ax(), ay());
+		checkTime = 0;
 		docked = false;
+	}
+
+	@Override
+	public String toString() {
+		return "Boat [speed=" + speed + ", da=" + da + ", " + (moves != null ? "moves=" + moves + ", " : "")
+				+ (target != null ? "target=" + target + ", " : "") + "checkTime=" + checkTime + ", docked=" + docked
+				+ ", angle=" + angle + ", ax()=" + ax() + ", ay()=" + ay() + "]";
 	}
 
 	public int ax() {
@@ -73,47 +82,8 @@ public class Boat extends RotatingPicture {
 		}
 
 		super.paint(g);
-		Graphics2D g2 = (Graphics2D) g;
-		g2.rotate(angle - Math.PI / 2, x + width / 2, y + height / 2);
-		// rotated things here, using g2 (not g)
-		g2.setColor(new Color(180, 240, 255));
-		g2.fillOval(ax() + 1, ay() - 60, 10, 10);
-		g2.fillOval(ax()-1, ay() - 60, 10, 10);
-		g2.fillOval(ax() - 3, ay() - 60, 10, 10);
-		g2.fillOval(ax() - 5, ay() - 60, 10, 10);
-		g2.fillOval(ax() - 7, ay() - 60, 10, 10);
-		
-		g2.fillOval(ax() - 1, ay() - 62, 8, 8);
-		g2.fillOval(ax() - 2, ay() - 62, 8, 8);
-		g2.fillOval(ax() - 3, ay() - 62, 8, 8);
-		g2.fillOval(ax() - 4, ay() - 62, 8, 8);
-		g2.fillOval(ax() - 5, ay() - 62, 8, 8);
-		
-		g2.fillOval(ax() - 1, ay() - 64, 6, 6);
-		g2.fillOval(ax() - 2, ay() - 64, 6, 6);
-		g2.fillOval(ax() - 3, ay() - 64, 6, 6);
-		g2.fillOval(ax() - 4, ay() - 64, 6, 6);
-		g2.fillOval(ax() - 5, ay() - 64, 6, 6);
-		
-		g2.fillOval(ax() - 3, ay() - 65, 6, 6);
-		g2.fillOval(ax() - 3, ay() - 66, 6, 6);
-		g2.fillOval(ax() - 3, ay() - 67, 6, 6);
-		g2.fillOval(ax() - 3, ay() - 68, 6, 6);
-		
-		g2.fillOval(ax() - 3, ay() - 69, 4, 4);
-		g2.fillOval(ax() - 3, ay() - 70, 4, 4);
-		g2.fillOval(ax() - 3, ay() - 71, 4, 4);
-		g2.fillOval(ax() - 3, ay() - 72, 4, 4);
-		/*g2.fillOval(ax(), ay() - 60, 10, 10);
-		g2.fillOval(ax(), ay() - 62, 10, 10);
-		g2.fillOval(ax(), ay() - 64, 9, 9);
-		g2.fillOval(ax(), ay() - 66, 8, 8);
-		g2.fillOval(ax(), ay() - 68, 6, 6);
-		g2.fillOval(ax(), ay() - 70, 3, 3);
-		g2.fillOval(ax(), ay() - 72, 2, 2);
-*/
-		g2.rotate(-(angle - Math.PI / 2), x + width / 2, y + height / 2);
 		g.setColor(Color.RED);
+		g.drawString(checkTime + "", ax(), ay());
 //		g.drawRect((int) (ax() - this.width), (int) (ay() - this.width), (int) (this.width * 2),
 //				(int) (this.width * 2));
 	}
@@ -121,7 +91,7 @@ public class Boat extends RotatingPicture {
 	public void addMove(Position p) {
 		moves.add(p);
 		docked = false;
-		checkTime = 200;
+		checkTime = startTime;
 	}
 
 	public void clearMoves() {

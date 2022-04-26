@@ -7,12 +7,24 @@ public class Game {
 	ArrayList<Boat> boats;
 	CursorDrag cursorDrag;
 	Map m;
+	int boatGenTime;
 
 	public Game() {
 		generate();
 	}
 
 	public void paint(Graphics g) {
+		if (boatGenTime == 0 && boats.size() < 10) {
+			EntrySector entry = m.randomEntry();
+			Boat b = new Boat(entry.x, entry.y, "boat1-0.png");
+			System.out.println(b);
+			b.clearMoves();
+			boats.add(b);
+			boatGenTime = 500;
+		}
+		if (boatGenTime > 0)
+			boatGenTime--;
+
 		m.paint(g);
 
 		for (int i = 0; i < boats.size(); i++) {
@@ -61,7 +73,7 @@ public class Game {
 		cursorDrag = new CursorDrag();
 		m = new Map("map1.png", "map1.txt");
 
-		for (int i = 0; i < 1; i++) {
+		for (int i = 0; i < 0; i++) {
 			boats.add(new Boat());
 		}
 	}

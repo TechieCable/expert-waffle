@@ -32,7 +32,6 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 	boolean playing = true;
 	boolean paused = false;
 	boolean titleHover = false;
-	RotatingPicture b = new RotatingPicture(20, 20, "boat1-0.png", 1);
 
 	public void paint(Graphics g) {
 		g.setColor(Color.BLACK);
@@ -48,10 +47,9 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 			}
 		}
 
-		b.paint(g);
-		b.angle += Math.PI / 100;
+		System.out.println(game.boats != null ? game.boats.get(0).toString() : "waiting");
 
-//		System.out.println(game.m.sectors.keySet());
+//		setStatus(game.m.entryPoints + "");
 
 	}
 
@@ -160,7 +158,7 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 		} else {
 			titleHover = false;
 		}
-		setStatus(m.getPoint() + "");
+//		setStatus(m.getPoint() + "");
 	}
 
 }
