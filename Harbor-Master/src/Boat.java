@@ -1,9 +1,13 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.util.ArrayList;
 
 public class Boat extends RotatingPicture {
 	static final int startTime = 200;
+//	static final Image orange = Picture.getImg("orange-cargo.png");
+//	static final Image purple = Picture.getImg("purple-cargo.png");
 
 	int speed;
 	double da;
@@ -11,22 +15,23 @@ public class Boat extends RotatingPicture {
 	Position target;
 	int checkTime;
 	boolean docked;
+	Cargo cargo;
 
 	public Boat() {
 		this((int) (Math.random() * (Driver.screenW - 20 - 20 + 1)) + 20,
-				(int) (Math.random() * (Driver.screenH - 20 - 20 + 1)) + 20, "boat1-0.png");
+				(int) (Math.random() * (Driver.screenH - 20 - 20 + 1)) + 20, 1);
 	}
 
-	public Boat(int x, int y, String fileName) {
-		super(x, y, fileName, 1.4);
+	public Boat(int x, int y, int boatNum) {
+		super(x, y, "boat" + boatNum + "-0.png", 1.4);
 		speed = 4;
 		da = Math.PI / 72 * speed;
 		target = new Position(ax(), ay());
 		checkTime = 0;
 		docked = false;
+		cargo = new Cargo(boatNum);
 	}
 
-	@Override
 	public String toString() {
 		return "Boat [speed=" + speed + ", da=" + da + ", " + (moves != null ? "moves=" + moves + ", " : "")
 				+ (target != null ? "target=" + target + ", " : "") + "checkTime=" + checkTime + ", docked=" + docked
@@ -82,10 +87,14 @@ public class Boat extends RotatingPicture {
 		}
 
 		super.paint(g);
-		g.setColor(Color.RED);
-		g.drawString(checkTime + "", ax(), ay());
-//		g.drawRect((int) (ax() - this.width), (int) (ay() - this.width), (int) (this.width * 2),
-//				(int) (this.width * 2));
+		Graphics2D g2 = (Graphics2D) g;
+		g2.rotate(angle - Math.PI / 2, x + width / 2, y + height / 2);
+		/** Rotated Graphics **/
+		// first cargo at 90, 130 on 4-cargo
+//		for (int i = 0; i < cargo.get().length; i++) {
+//			
+//		}
+		g2.rotate(-(angle - Math.PI / 2), x + width / 2, y + height / 2);
 	}
 
 	public void addMove(Position p) {
@@ -155,4 +164,35 @@ public class Boat extends RotatingPicture {
 		return min;
 	}
 
+}
+
+class Cargo {
+	// 0 means no cargo
+	// 1 means orange
+	// 2 means purple
+	private int[] cargo;
+
+	public Cargo(int num) {
+		cargo = new int[num];
+	}
+
+	public void fillRandom() {
+		for (int i = 0; i < cargo.length; i++) {
+			cargo[i] = (int) (Math.random() * 2) + 1;
+		}
+	}
+
+	public boolean clearOne(int type) {
+		for (int i = 0; i < cargo.length; i++) {
+			if (cargo[i] == type) {
+				cargo[i] = 0;
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public int[] get() {
+		return cargo;
+	}
 }

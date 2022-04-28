@@ -75,7 +75,7 @@ public class Map extends Picture {
 	}
 
 	public EntrySector randomEntry() {
-		return entryPoints.get((int) (Math.random() * entryPoints.size()));
+		return entryPoints.get((int) (Math.random() * (entryPoints.size())));
 	}
 
 }

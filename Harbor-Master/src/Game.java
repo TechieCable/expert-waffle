@@ -1,5 +1,4 @@
 import java.awt.Graphics;
-import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
@@ -16,9 +15,11 @@ public class Game {
 	public void paint(Graphics g) {
 		if (boatGenTime == 0 && boats.size() < 10) {
 			EntrySector entry = m.randomEntry();
-			Boat b = new Boat(entry.x, entry.y, "boat1-0.png");
+			Boat b = new Boat(entry.x, entry.y, 1);
 			System.out.println(b);
 			b.clearMoves();
+			b.addMove(new Position(Driver.screenW / 2, Driver.screenH / 2));
+			b.addMove(new Position(Driver.screenW / 2, Driver.screenH / 2));
 			boats.add(b);
 			boatGenTime = 500;
 		}

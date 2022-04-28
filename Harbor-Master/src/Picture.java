@@ -109,6 +109,17 @@ public class Picture {
 		return tempImage;
 	}
 
+	public static Image getImg(String path) {
+		Image tempImage = null;
+		try {
+			URL imageURL = Picture.class.getResource(path);
+			tempImage = Toolkit.getDefaultToolkit().getImage(imageURL);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return tempImage;
+	}
+
 	public String toString() {
 		return "[x=" + x + ", y=" + y + ", width=" + width + ", height=" + height + "]";
 	}
