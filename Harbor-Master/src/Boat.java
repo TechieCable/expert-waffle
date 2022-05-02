@@ -1,13 +1,10 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.util.ArrayList;
 
 public class Boat extends RotatingPicture {
 	static final int startTime = 200;
-//	static final Image orange = Picture.getImg("orange-cargo.png");
-//	static final Image purple = Picture.getImg("purple-cargo.png");
 
 	int speed;
 	double da;
@@ -90,10 +87,14 @@ public class Boat extends RotatingPicture {
 		Graphics2D g2 = (Graphics2D) g;
 		g2.rotate(angle - Math.PI / 2, x + width / 2, y + height / 2);
 		/** Rotated Graphics **/
-		// first cargo at 90, 130 on 4-cargo
-//		for (int i = 0; i < cargo.get().length; i++) {
-//			
-//		}
+//		g2.drawRect(ax() - 15, ay() - 45, 30, 15);
+//		g2.drawRect(ax() - 15, ay() - 28, 30, 15);
+//		g2.drawRect(ax() - 15, ay() - 11, 30, 15);
+//		g2.drawRect(ax() - 15, ay() + 6, 30, 15);
+
+		for (int i = 0; i < cargo.get().length; i++) {
+			g2.drawRect(ax() - 15, ay() + 6 - (17 * i), 30, 15);
+		}
 		g2.rotate(-(angle - Math.PI / 2), x + width / 2, y + height / 2);
 	}
 
