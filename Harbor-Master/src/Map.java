@@ -2,7 +2,6 @@ import java.awt.Graphics;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map.Entry;
 import java.util.Scanner;
 
 public class Map extends Picture {
@@ -23,7 +22,7 @@ public class Map extends Picture {
 					continue;
 				}
 				if (x.equals("d")) {
-					dockPoints.add(new DockSector(s.next(), s.next(), s.next(), s.next(), s.next()));
+					dockPoints.add(new DockSector(s.next(), s.next(), s.next(), s.next(), s.next(), s.next()));
 					continue;
 				}
 				if (x.equals("e")) {
@@ -89,8 +88,8 @@ class Sector extends Position {
 		super(x, y);
 	}
 
-	public Sector(String a, String b) {
-		this(Integer.valueOf(a), Integer.valueOf(b));
+	public Sector(String x, String y) {
+		this(Integer.valueOf(x), Integer.valueOf(y));
 	}
 
 	public boolean over(int x, int y) {
@@ -105,12 +104,17 @@ class Sector extends Position {
 class DockSector extends Sector {
 	int dockX, dockY;
 	double angle;
+	/**
+	 * 1 = orange, 2 = purple
+	 */
+	int type;
 
-	public DockSector(String a, String b, String c, String d, String e) {
-		super(a, b);
-		dockX = Integer.valueOf(c);
-		dockY = Integer.valueOf(d);
-		angle = Integer.valueOf(e) * Math.PI / 180;
+	public DockSector(String x, String y, String dockX, String dockY, String angle, String type) {
+		super(x, y);
+		this.dockX = Integer.valueOf(dockX);
+		this.dockY = Integer.valueOf(dockY);
+		this.angle = Integer.valueOf(angle) * Math.PI / 180;
+		this.type = Integer.valueOf(type);
 	}
 
 	public DockSector dock(Boat b) {
@@ -130,17 +134,17 @@ class LandSector extends Sector {
 	// 4: southeast
 	public int redirection;
 
-	public LandSector(String a, String b, String c) {
-		super(a, b);
-		this.redirection = Integer.valueOf(c);
+	public LandSector(String x, String y, String redirection) {
+		super(x, y);
+		this.redirection = Integer.valueOf(redirection);
 	}
 
 }
 
 @SuppressWarnings("serial")
 class EntrySector extends Sector {
-	public EntrySector(String a, String b) {
-		super(a, b);
+	public EntrySector(String x, String y) {
+		super(x, y);
 	}
 
 }

@@ -32,16 +32,16 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 	boolean playing = true;
 	boolean paused = false;
 	boolean titleHover = false;
-	Boat b = new Boat(100, 100, 4);
+//	Boat b = new Boat(100, 100, 1);
 
 	public void paint(Graphics g) {
-		b.docked = true;
-		b.angle = Math.PI / 2;
+//		b.docked = true;
+//		b.angle = Math.PI / 2;
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, screenW, screenH);
 
 		if (playing) {
-//			game.paint(g);
+			game.paint(g);
 		} else {
 			if (!titleHover) {
 				title1.paint(g);
@@ -52,7 +52,7 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 
 //		setStatus(game.boats != null ? game.boats.get(0).toString() : "waiting");
 
-		b.paint(g);
+//		b.paint(g);
 
 	}
 

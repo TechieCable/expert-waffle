@@ -16,7 +16,6 @@ public class Game {
 		if (boatGenTime == 0 && boats.size() < 10) {
 			EntrySector entry = m.randomEntry();
 			Boat b = new Boat(entry.x, entry.y, 1);
-			System.out.println(b);
 			b.clearMoves();
 			b.addMove(new Position(Driver.screenW / 2, Driver.screenH / 2));
 			b.addMove(new Position(Driver.screenW / 2, Driver.screenH / 2));
@@ -34,7 +33,7 @@ public class Game {
 			// dock checks
 			for (DockSector x : m.dockPoints) {
 				DockSector dock = x.dock(b);
-				if (dock != null) {
+				if (dock != null && b.cargo.portMatch(dock)) {
 					b.clearMoves();
 					b.x = dock.dockX;
 					b.y = dock.dockY;

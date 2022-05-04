@@ -14,6 +14,8 @@ public class Boat extends RotatingPicture {
 	boolean docked;
 	Cargo cargo;
 
+	int boatNum;
+
 	public Boat() {
 		this((int) (Math.random() * (Driver.screenW - 20 - 20 + 1)) + 20,
 				(int) (Math.random() * (Driver.screenH - 20 - 20 + 1)) + 20, 1);
@@ -27,6 +29,7 @@ public class Boat extends RotatingPicture {
 		checkTime = 0;
 		docked = false;
 		cargo = new Cargo(boatNum);
+		this.boatNum = boatNum;
 	}
 
 	public String toString() {
@@ -87,13 +90,19 @@ public class Boat extends RotatingPicture {
 		Graphics2D g2 = (Graphics2D) g;
 		g2.rotate(angle - Math.PI / 2, x + width / 2, y + height / 2);
 		/** Rotated Graphics **/
-//		g2.drawRect(ax() - 15, ay() - 45, 30, 15);
-//		g2.drawRect(ax() - 15, ay() - 28, 30, 15);
-//		g2.drawRect(ax() - 15, ay() - 11, 30, 15);
-//		g2.drawRect(ax() - 15, ay() + 6, 30, 15);
-
 		for (int i = 0; i < cargo.get().length; i++) {
-			g2.drawRect(ax() - 15, ay() + 6 - (17 * i), 30, 15);
+			if (cargo.get()[i] == 1) {
+				g2.setColor(Color.ORANGE);
+			} else {
+				g2.setColor(Color.MAGENTA);
+			}
+			if (boatNum == 4) {
+				g2.fillRect(ax() - 15, ay() + 6 - (17 * i), 30, 15);
+			} else if (boatNum == 2) {
+				g2.fillRect(ax() - 14, ay() + 2 - (17 * i), 28, 15);
+			} else if (boatNum == 1) {
+				g2.fillRect(ax() - 13, ay() - 25, 26, 22);
+			}
 		}
 		g2.rotate(-(angle - Math.PI / 2), x + width / 2, y + height / 2);
 	}
@@ -187,6 +196,15 @@ class Cargo {
 		for (int i = 0; i < cargo.length; i++) {
 			if (cargo[i] == type) {
 				cargo[i] = 0;
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean portMatch(DockSector dock) {
+		for (int i : cargo) {
+			if (dock.type == i) {
 				return true;
 			}
 		}
