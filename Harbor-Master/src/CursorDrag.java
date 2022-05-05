@@ -14,7 +14,6 @@ public class CursorDrag {
 	}
 
 	public void setStart(MouseEvent m) {
-
 		start = m.getPoint();
 		curr = null;
 		dragging = true;
@@ -34,10 +33,6 @@ public class CursorDrag {
 		curr = null;
 		dragging = false;
 	}
-
-//	public Position midPoint(Position p) {
-//		
-//	}
 
 	public int distance() {
 		if (dragging == false) {

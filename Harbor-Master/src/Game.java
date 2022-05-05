@@ -15,7 +15,7 @@ public class Game {
 	public void paint(Graphics g) {
 		if (boatGenTime == 0 && boats.size() < 10) {
 			EntrySector entry = m.randomEntry();
-			Boat b = new Boat(entry.x, entry.y, 1);
+			Boat b = new Boat(entry.x, entry.y, Boat.randomBoatNum());
 			b.clearMoves();
 			b.addMove(new Position(Driver.screenW / 2, Driver.screenH / 2));
 			b.addMove(new Position(Driver.screenW / 2, Driver.screenH / 2));
@@ -72,10 +72,6 @@ public class Game {
 		boats = new ArrayList<Boat>();
 		cursorDrag = new CursorDrag();
 		m = new Map("map1.png", "map1.txt");
-
-		for (int i = 0; i < 0; i++) {
-			boats.add(new Boat());
-		}
 	}
 
 	public void boatClickHandler(MouseEvent e) {
@@ -93,7 +89,6 @@ public class Game {
 		if (cursorDrag.setCurr(e)) {
 			boats.get(cursorDrag.activeBoatID).addMove(new Position(cursorDrag.start));
 		}
-
 	}
 
 }

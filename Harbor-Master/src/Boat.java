@@ -2,18 +2,19 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Boat extends RotatingPicture {
-	static final int startTime = 200;
+	static final Color purple = new Color(167, 40, 238);
+	static final Color orange = new Color(255, 192, 0);
 
 	int speed;
 	double da;
-	ArrayList<Position> moves = new ArrayList<Position>();
+	ArrayList<Position> moves;
 	Position target;
 	int checkTime;
 	boolean docked;
 	Cargo cargo;
-
 	int boatNum;
 
 	public Boat() {
@@ -25,6 +26,7 @@ public class Boat extends RotatingPicture {
 		super(x, y, "boat" + boatNum + "-0.png", 1.4);
 		speed = 4;
 		da = Math.PI / 72 * speed;
+		moves = new ArrayList<Position>();
 		target = new Position(ax(), ay());
 		checkTime = 0;
 		docked = false;
@@ -82,7 +84,6 @@ public class Boat extends RotatingPicture {
 		g.setColor(Color.WHITE);
 
 		for (int i = 0; i < moves.size() - 1; i++) {
-			// g.drawRect(moves.get(i).x - 5, moves.get(i).y - 5, 10, 10);
 			g.drawLine(moves.get(i).x, moves.get(i).y, moves.get(i + 1).x, moves.get(i + 1).y);
 		}
 
@@ -92,9 +93,9 @@ public class Boat extends RotatingPicture {
 		/** Rotated Graphics **/
 		for (int i = 0; i < cargo.get().length; i++) {
 			if (cargo.get()[i] == 1) {
-				g2.setColor(Color.ORANGE);
+				g2.setColor(orange);
 			} else {
-				g2.setColor(Color.MAGENTA);
+				g2.setColor(purple);
 			}
 			if (boatNum == 4) {
 				g2.fillRect(ax() - 15, ay() + 6 - (17 * i), 30, 15);
@@ -110,7 +111,6 @@ public class Boat extends RotatingPicture {
 	public void addMove(Position p) {
 		moves.add(p);
 		docked = false;
-		checkTime = startTime;
 	}
 
 	public void clearMoves() {
@@ -119,8 +119,9 @@ public class Boat extends RotatingPicture {
 	}
 
 	public void move() {
-		if (docked)
+		if (docked) {
 			return;
+		}
 		if (checkTime > 0) {
 			checkTime--;
 		}
@@ -174,6 +175,14 @@ public class Boat extends RotatingPicture {
 		return min;
 	}
 
+	public static int randomBoatNum() {
+		int res = 0;
+		while (!(res == 1 || res == 2 || res == 4)) {
+			res = (int) (Math.random() * 4) + 1;
+		}
+		return res;
+	}
+
 }
 
 class Cargo {
@@ -184,6 +193,7 @@ class Cargo {
 
 	public Cargo(int num) {
 		cargo = new int[num];
+		fillRandom();
 	}
 
 	public void fillRandom() {
@@ -213,5 +223,9 @@ class Cargo {
 
 	public int[] get() {
 		return cargo;
+	}
+
+	public String toString() {
+		return Arrays.toString(cargo);
 	}
 }

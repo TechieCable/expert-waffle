@@ -46,12 +46,19 @@ public class Map extends Picture {
 //			int[] cors = cors(s.getKey());
 //			g.fillRect(cors[0] * Sector.width, cors[1] * Sector.width, Sector.width, Sector.width);
 //		}
-		for (DockSector x : dockPoints) {
-			g.fillRect(x.x - Sector.width / 2, x.y - Sector.width / 2, Sector.width, Sector.width);
-		}
-		for (EntrySector x : entryPoints) {
-			g.fillRect(x.x - Sector.width / 2, x.y - Sector.width / 2, Sector.width, Sector.width);
-		}
+//		for (DockSector x : dockPoints) {
+//			if (x.type == 1) {
+//				g.setColor(Boat.orange);
+//			} else {
+//				g.setColor(Boat.purple);
+//			}
+//			g.fillRect(x.x - Sector.width / 2, x.y - Sector.width / 2, Sector.width, Sector.width);
+//			g.setColor(Color.WHITE);
+//			g.fillRect(x.dockX - Sector.width / 2, x.dockY - Sector.width / 2, Sector.width, Sector.width);
+//		}
+//		for (EntrySector x : entryPoints) {
+//			g.fillRect(x.x - Sector.width / 2, x.y - Sector.width / 2, Sector.width, Sector.width);
+//		}
 	}
 
 	public int[] cors(String s) {

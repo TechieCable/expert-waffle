@@ -1,6 +1,5 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Label;
 import java.awt.Point;
@@ -12,9 +11,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -27,16 +24,13 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 
 	static Label stat;
 	Game game;
-	Picture title1 = new Picture(0, 0, "Title.png", 1);
-	Picture title2 = new Picture(0, 0, "Title_Highlighted.png", 1);
-	boolean playing = true;
-	boolean paused = false;
-	boolean titleHover = false;
-//	Boat b = new Boat(100, 100, 1);
+	Picture title1;
+	Picture title2;
+	boolean playing;
+	boolean paused;
+	boolean titleHover;
 
 	public void paint(Graphics g) {
-//		b.docked = true;
-//		b.angle = Math.PI / 2;
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, screenW, screenH);
 
@@ -49,23 +43,16 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 				title2.paint(g);
 			}
 		}
-
-//		setStatus(game.boats != null ? game.boats.get(0).toString() : "waiting");
-
-//		b.paint(g);
-
 	}
 
 	public static void main(String[] arg) {
 		@SuppressWarnings("unused")
 		Driver d = new Driver();
-
 	}
 
 	public Driver() {
 		JFrame frame = new JFrame("Harbor Master");
-		// TODO: add icon image
-		// frame.setIconImage(Toolkit.getDefaultToolkit().getImage(""));
+		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(Driver.class.getResource("/imgs/boat1-0.png")));
 		frame.setSize(screenW, screenH);
 		frame.add(this);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -83,19 +70,20 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 
 		frame.setVisible(true);
 
-		BufferedImage cursorImg;
 		try {
-			cursorImg = ImageIO.read(new File("Cursor.png"));
-			Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, 0),
-					"blank cursor");
-			frame.getContentPane().setCursor(blankCursor);
-		} catch (IOException e) {
+			frame.getContentPane().setCursor(Toolkit.getDefaultToolkit()
+					.createCustomCursor(ImageIO.read(new File("Cursor.png")), new Point(0, 0), "blank cursor"));
+		} catch (Exception e) {
 		}
-
 	}
 
 	public void generate() {
 		game = new Game();
+		title1 = new Picture(0, 0, "Title.png", 1);
+		title2 = new Picture(0, 0, "Title_Highlighted.png", 1);
+		playing = true;
+		paused = false;
+		titleHover = false;
 	}
 
 	public static void setStatus(String s) {
@@ -161,7 +149,7 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 		} else {
 			titleHover = false;
 		}
-		setStatus(m.getPoint() + "");
+		// setStatus(m.getPoint() + "");
 	}
 
 }
