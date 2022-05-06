@@ -13,7 +13,7 @@ public class Game {
 	}
 
 	public void paint(Graphics g) {
-		if (boatGenTime == 0 && boats.size() < 10) {
+		if (boatGenTime == 0 && boats.size() < Driver.maxBoats) {
 			EntrySector entry = m.randomEntry();
 			Boat b = new Boat(entry.x, entry.y, Boat.randomBoatNum());
 			b.clearMoves();
@@ -32,13 +32,13 @@ public class Game {
 
 			// dock checks
 			for (DockSector x : m.dockPoints) {
-				DockSector dock = x.dock(b);
-				if (dock != null && b.cargo.portMatch(dock)) {
+//				DockSector dock = x.dock(b);
+				if (x.dock(b) && b.cargo.hasCargo(x.type)) {
 					b.clearMoves();
-					b.x = dock.dockX;
-					b.y = dock.dockY;
-					b.angle = dock.angle;
-					b.docked = true;
+					b.x = x.dockX;
+					b.y = x.dockY;
+					b.angle = x.angle;
+					b.dockInfo.enter(x);
 				}
 			}
 

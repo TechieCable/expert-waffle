@@ -21,7 +21,7 @@ public class CursorDrag {
 
 	public boolean setCurr(MouseEvent m) {
 		curr = m.getPoint();
-		if (distance() > 20) {
+		if (distance() > 10) {
 			start = curr;
 			return true;
 		}

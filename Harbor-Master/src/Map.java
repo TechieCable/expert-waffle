@@ -44,6 +44,8 @@ public class Map extends Picture {
 
 //		for (Entry<String, LandSector> s : sectors.entrySet()) {
 //			int[] cors = cors(s.getKey());
+//			s.getValue().highlight--;
+//			g.setColor(s.getValue().highlight > 0 ? Color.RED : Color.BLACK);
 //			g.fillRect(cors[0] * Sector.width, cors[1] * Sector.width, Sector.width, Sector.width);
 //		}
 //		for (DockSector x : dockPoints) {
@@ -61,7 +63,7 @@ public class Map extends Picture {
 //		}
 	}
 
-	public int[] cors(String s) {
+	public static int[] cors(String s) {
 		return new int[] { Integer.valueOf(s.substring(0, Sector.z.length())),
 				Integer.valueOf(s.substring(Sector.z.length())) };
 	}
@@ -72,12 +74,18 @@ public class Map extends Picture {
 	}
 
 	public LandSector overLand(Boat b) {
-		LandSector first = overLand((int) (b.ax() - b.height), (int) (b.ay() - b.height));
-		if (first != null) {
-			return first;
-		} else {
-			return overLand((int) (b.ax() + b.height), (int) (b.ay() + b.height));
+		LandSector test = overLand((int) (b.ax() - b.width), (int) (b.ay() - b.width));
+		if (test != null) {
+			test.highlight = 100;
+			return test;
 		}
+		test = overLand((int) (b.ax() + b.height), (int) (b.ay() + b.height));
+		if (test != null) {
+			test.highlight = 100;
+			return test;
+		}
+
+		return null;
 	}
 
 	public EntrySector randomEntry() {
@@ -90,6 +98,7 @@ public class Map extends Picture {
 class Sector extends Position {
 	static int width = 20;
 	static String z = "000";
+	int highlight = 0;
 
 	public Sector(int x, int y) {
 		super(x, y);
@@ -99,12 +108,12 @@ class Sector extends Position {
 		this(Integer.valueOf(x), Integer.valueOf(y));
 	}
 
-	public boolean over(int x, int y) {
-		if ((x > this.x) && (y > this.y) && (x < this.x + Sector.width) && (y < this.y + Sector.width)) {
-			return true;
-		}
-		return false;
-	}
+//	public boolean over(int x, int y) {
+//		if ((x > this.x) && (y > this.y) && (x < this.x + Sector.width) && (y < this.y + Sector.width)) {
+//			return true;
+//		}
+//		return false;
+//	}
 }
 
 @SuppressWarnings("serial")
@@ -124,11 +133,11 @@ class DockSector extends Sector {
 		this.type = Integer.valueOf(type);
 	}
 
-	public DockSector dock(Boat b) {
+	public boolean dock(Boat b) {
 		if (distanceFrom(b.ax(), b.ay()) < 50) {
-			return this;
+			return true;
 		}
-		return null;
+		return false;
 	}
 
 }

@@ -21,6 +21,8 @@ import javax.swing.Timer;
 @SuppressWarnings("serial")
 public class Driver extends JPanel implements ActionListener, KeyListener, MouseListener, MouseMotionListener {
 	public static int screenW = 1920, screenH = 1080;
+	
+	public static int maxBoats = 1;
 
 	static Label stat;
 	Game game;
@@ -86,6 +88,11 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 		titleHover = false;
 	}
 
+	public static void display(String s) {
+		System.out.println(s);
+		stat.setText(s);
+	}
+
 	public static void setStatus(String s) {
 		stat.setText(s);
 	}
@@ -112,10 +119,9 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 //		String x = (m.getX() + 10) / Sector.width + "";
 //		String y = (m.getY() + 10) / Sector.width + "";
 //		if (m.getButton() == 1) {
-//			game.m.sectors.put(Sector.z.substring(x.length()) + x + Sector.z.substring(y.length()) + y,
-//					new Sector(x, y, "0"));
+//			sectors.put(Sector.z.substring(x.length()) + x + Sector.z.substring(y.length()) + y, new Sector(x, y));
 //		} else {
-//			game.m.sectors.remove(Sector.z.substring(x.length()) + x + Sector.z.substring(y.length()) + y);
+//			sectors.remove(Sector.z.substring(x.length()) + x + Sector.z.substring(y.length()) + y);
 //		}
 
 		if (!playing && m.getX() > 805 && m.getY() > 770 && m.getX() < 1275 && m.getY() < 980) {
@@ -149,7 +155,6 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 		} else {
 			titleHover = false;
 		}
-		// setStatus(m.getPoint() + "");
 	}
 
 }

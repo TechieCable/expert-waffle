@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -158,6 +159,14 @@ class RotatingPicture extends Picture {
 
 	public RotatingPicture(int x, int y, String fileName, double scaleSize) {
 		super(x, y, fileName, scaleSize);
+	}
+
+	public int ax() {
+		return (int) (x + width / 2);
+	}
+
+	public int ay() {
+		return (int) (y + height / 2);
 	}
 
 	public void rotateTo(double angle) {

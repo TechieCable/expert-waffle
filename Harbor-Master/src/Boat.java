@@ -13,7 +13,7 @@ public class Boat extends RotatingPicture {
 	ArrayList<Position> moves;
 	Position target;
 	int checkTime;
-	boolean docked;
+	DockStamp dockInfo;
 	Cargo cargo;
 	int boatNum;
 
@@ -29,26 +29,22 @@ public class Boat extends RotatingPicture {
 		moves = new ArrayList<Position>();
 		target = new Position(ax(), ay());
 		checkTime = 0;
-		docked = false;
+		dockInfo = new DockStamp();
 		cargo = new Cargo(boatNum);
 		this.boatNum = boatNum;
 	}
 
 	public String toString() {
 		return "Boat [speed=" + speed + ", da=" + da + ", " + (moves != null ? "moves=" + moves + ", " : "")
-				+ (target != null ? "target=" + target + ", " : "") + "checkTime=" + checkTime + ", docked=" + docked
-				+ ", angle=" + angle + ", ax()=" + ax() + ", ay()=" + ay() + "]";
-	}
-
-	public int ax() {
-		return (int) (x + width / 2);
-	}
-
-	public int ay() {
-		return (int) (y + height / 2);
+				+ (target != null ? "target=" + target + ", " : "") + "checkTime=" + checkTime
+				+ (dockInfo != null ? "dock=" + dockInfo + ", " : "") + ", angle=" + angle + ", ax()=" + ax()
+				+ ", ay()=" + ay() + "]";
 	}
 
 	/**
+	 * returns the direction the boat is facing
+	 * 
+	 * 1: northeast, 2: northwest, 3: southwest, 4: southeast
 	 * 
 	 * @return direction
 	 */
@@ -73,6 +69,13 @@ public class Boat extends RotatingPicture {
 		}
 	}
 
+	/**
+	 * returns if x and y are within the boat
+	 * 
+	 * @param x
+	 * @param y
+	 * @return wasClicked
+	 */
 	public boolean clicked(int x, int y) {
 		return (x > ax() - this.width && y > ay() - this.width && x < ax() + this.width && y < ay() + this.width);
 	}
@@ -80,6 +83,8 @@ public class Boat extends RotatingPicture {
 	public void paint(Graphics g) {
 		speed = (int) ((264 * scaleSize) / height);
 		da = Math.PI / 72 * speed;
+
+		dockInfo.time(cargo);
 
 		g.setColor(Color.WHITE);
 
@@ -90,7 +95,7 @@ public class Boat extends RotatingPicture {
 		super.paint(g);
 		Graphics2D g2 = (Graphics2D) g;
 		g2.rotate(angle - Math.PI / 2, x + width / 2, y + height / 2);
-		/** Rotated Graphics **/
+		/** DRAW CARGO **/
 		for (int i = 0; i < cargo.get().length; i++) {
 			if (cargo.get()[i] == 1) {
 				g2.setColor(orange);
@@ -108,9 +113,14 @@ public class Boat extends RotatingPicture {
 		g2.rotate(-(angle - Math.PI / 2), x + width / 2, y + height / 2);
 	}
 
+	/**
+	 * add a move to the list
+	 * 
+	 * @param p
+	 */
 	public void addMove(Position p) {
 		moves.add(p);
-		docked = false;
+		dockInfo.docked = false;
 	}
 
 	public void clearMoves() {
@@ -119,7 +129,7 @@ public class Boat extends RotatingPicture {
 	}
 
 	public void move() {
-		if (docked) {
+		if (dockInfo.docked) {
 			return;
 		}
 		if (checkTime > 0) {
@@ -129,7 +139,7 @@ public class Boat extends RotatingPicture {
 		this.angle %= Math.PI * 2;
 
 		if (moves.size() > 0) {
-			if (target.distanceFrom(ax(), ay()) < 20) {
+			if (target.distanceFrom(ax(), ay()) < 20) { // 20
 				try {
 					target = moves.remove(0);
 				} catch (Exception e) {
@@ -202,6 +212,13 @@ class Cargo {
 		}
 	}
 
+	/**
+	 * attempts to clear a piece of cargo of the specified type true if successful
+	 * false if no cargo of type left
+	 * 
+	 * @param type
+	 * @return success
+	 */
 	public boolean clearOne(int type) {
 		for (int i = 0; i < cargo.length; i++) {
 			if (cargo[i] == type) {
@@ -212,9 +229,9 @@ class Cargo {
 		return false;
 	}
 
-	public boolean portMatch(DockSector dock) {
+	public boolean hasCargo(int type) {
 		for (int i : cargo) {
-			if (dock.type == i) {
+			if (type == i) {
 				return true;
 			}
 		}
@@ -227,5 +244,35 @@ class Cargo {
 
 	public String toString() {
 		return Arrays.toString(cargo);
+	}
+}
+
+class DockStamp {
+	int time;
+	int type;
+	boolean docked;
+
+	public DockStamp() {
+		time = 0;
+		type = 0;
+		docked = false;
+	}
+
+	public void enter(DockSector d) {
+		Driver.display("boat docked");
+		time = 0;
+		type = d.type;
+		docked = true;
+	}
+
+	public void time(Cargo c) {
+		if (docked) {
+			time++;
+			Driver.display("boat on dock " + time);
+			if (time > 200) {
+				time %= 200;
+				c.clearOne(type);
+			}
+		}
 	}
 }
