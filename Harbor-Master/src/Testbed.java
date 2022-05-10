@@ -19,42 +19,49 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 @SuppressWarnings("serial")
-public class Driver extends JPanel implements ActionListener, KeyListener, MouseListener, MouseMotionListener {
+public class Testbed extends JPanel implements ActionListener, KeyListener, MouseListener, MouseMotionListener {
 	public static int screenW = 1920, screenH = 1080;
 
 	public static int maxBoats = 1;
 
 	static Label stat;
-	Game game;
-	Picture title1;
-	Picture title2;
-	boolean playing;
-	boolean paused;
-	boolean titleHover;
+	Boat b = new Boat(screenW / 2, screenH / 2, 1);
 
 	public void paint(Graphics g) {
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, screenW, screenH);
+		b.paint(g);
+		b.dockInfo.docked = true;
+		double tempAngle = Math.PI * 2 - b.angle;
+		tempAngle %= Math.PI * 2;
+		display("" + (tempAngle * 180 / Math.PI));
+		g.setColor(Color.WHITE);
+		g.drawString("height = " + b.height, 100, 50);
+		g.drawString("width = " + b.width, 100, 75);
+		g.drawString("height * cos(angle) = " + Math.abs(b.height * Math.cos(tempAngle)), 100, 100);
+		g.drawString("height * sin(angle) = " + Math.abs(b.height * Math.sin(tempAngle)), 100, 125);
+		g.drawString("width * cos(angle) = " + Math.abs(b.width * Math.cos(tempAngle)), 100, 150);
+		g.drawString("width * sin(angle) = " + Math.abs(b.width * Math.sin(tempAngle)), 100, 175);
 
-		if (playing) {
-			game.paint(g);
-		} else {
-			if (!titleHover) {
-				title1.paint(g);
-			} else {
-				title2.paint(g);
-			}
-		}
+		g.drawString(
+				"suggested height = "
+						+ (Math.abs(b.width * Math.sin(tempAngle)) + Math.abs(b.height * Math.sin(tempAngle))),
+				100, 225);
+		g.drawString(
+				"suggested width = "
+						+ (Math.abs(b.width * Math.cos(tempAngle)) + Math.abs(b.height * Math.cos(tempAngle))),
+				100, 250);
+
 	}
 
 	public static void main(String[] arg) {
 		@SuppressWarnings("unused")
-		Driver d = new Driver();
+		Testbed d = new Testbed();
 	}
 
-	public Driver() {
-		JFrame frame = new JFrame("Harbor Master");
-		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(Driver.class.getResource("/imgs/boat1-0.png")));
+	public Testbed() {
+		JFrame frame = new JFrame("Harbor Master TestBed");
+		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(Testbed.class.getResource("/imgs/boat1-0.png")));
 		frame.setSize(screenW, screenH);
 		frame.add(this);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -62,7 +69,7 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 		frame.addMouseListener(this);
 		frame.addMouseMotionListener(this);
 		frame.getContentPane().add(BorderLayout.NORTH, stat = new Label());
-		stat.setSize(frame.getSize().width, stat.getSize().height);
+		Testbed.stat.setSize(frame.getSize().width, stat.getSize().height);
 		t.start();
 
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -80,12 +87,6 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 	}
 
 	public void generate() {
-		game = new Game();
-		title1 = new Picture(0, 0, "Title.png", 1);
-		title2 = new Picture(0, 0, "Title_Highlighted.png", 1);
-		playing = true;
-		paused = false;
-		titleHover = false;
 	}
 
 	public static void display(String s) {
@@ -104,6 +105,17 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 	}
 
 	public void keyPressed(KeyEvent m) {
+		switch (m.getKeyCode()) {
+		case 37:
+			b.angle -= Math.PI / 12;
+			break;
+		case 39:
+			b.angle += Math.PI / 12;
+			break;
+
+		default:
+			break;
+		}
 
 	}
 
@@ -116,45 +128,25 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 	}
 
 	public void mouseClicked(MouseEvent m) {
-//		String x = (m.getX() + 10) / Sector.width + "";
-//		String y = (m.getY() + 10) / Sector.width + "";
-//		if (m.getButton() == 1) {
-//			sectors.put(Sector.z.substring(x.length()) + x + Sector.z.substring(y.length()) + y, new Sector(x, y));
-//		} else {
-//			sectors.remove(Sector.z.substring(x.length()) + x + Sector.z.substring(y.length()) + y);
-//		}
 
-		if (!playing && m.getX() > 805 && m.getY() > 770 && m.getX() < 1275 && m.getY() < 980) {
-			playing = true;
-		}
 	}
 
 	public void mouseEntered(MouseEvent m) {
-		paused = false;
 	}
 
 	public void mouseExited(MouseEvent m) {
-		paused = true;
 	}
 
 	public void mousePressed(MouseEvent m) {
-		game.boatClickHandler(m);
 	}
 
 	public void mouseReleased(MouseEvent m) {
-		game.cursorDrag.end();
 	}
 
 	public void mouseDragged(MouseEvent m) {
-		game.boatDragHandler(m);
 	}
 
 	public void mouseMoved(MouseEvent m) {
-		if (!playing && m.getX() > 805 && m.getY() > 770 && m.getX() < 1275 && m.getY() < 980) {
-			titleHover = true;
-		} else {
-			titleHover = false;
-		}
 	}
 
 }

@@ -29,16 +29,21 @@ public class Game {
 
 		for (int i = 0; i < boats.size(); i++) {
 			Boat b = boats.get(i);
+			if (b.remove) {
+				boats.remove(i);
+				i--;
+			}
 
 			// dock checks
-			for (DockSector x : m.dockPoints) {
-//				DockSector dock = x.dock(b);
-				if (x.dock(b) && b.cargo.hasCargo(x.type)) {
-					b.clearMoves();
-					b.x = x.dockX;
-					b.y = x.dockY;
-					b.angle = x.angle;
-					b.dockInfo.enter(x);
+			if (b.cargo.hasCargo() && !b.dockInfo.docked) {
+				for (DockSector x : m.dockPoints) {
+					if (x.dock(b) && b.cargo.hasCargo(x.type)) {
+						b.clearMoves();
+						b.x = x.dockX;
+						b.y = x.dockY;
+						b.angle = x.angle;
+						b.dockInfo.enter(x);
+					}
 				}
 			}
 

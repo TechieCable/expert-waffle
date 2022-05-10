@@ -16,6 +16,7 @@ public class Boat extends RotatingPicture {
 	DockStamp dockInfo;
 	Cargo cargo;
 	int boatNum;
+	boolean remove;
 
 	public Boat() {
 		this((int) (Math.random() * (Driver.screenW - 20 - 20 + 1)) + 20,
@@ -32,6 +33,7 @@ public class Boat extends RotatingPicture {
 		dockInfo = new DockStamp();
 		cargo = new Cargo(boatNum);
 		this.boatNum = boatNum;
+		remove = false;
 	}
 
 	public String toString() {
@@ -84,7 +86,10 @@ public class Boat extends RotatingPicture {
 		speed = (int) ((264 * scaleSize) / height);
 		da = Math.PI / 72 * speed;
 
-		dockInfo.time(cargo);
+		if (dockInfo.time(cargo)) {
+			angle -= Math.PI;
+			checkTime = 50;
+		}
 
 		g.setColor(Color.WHITE);
 
@@ -97,9 +102,11 @@ public class Boat extends RotatingPicture {
 		g2.rotate(angle - Math.PI / 2, x + width / 2, y + height / 2);
 		/** DRAW CARGO **/
 		for (int i = 0; i < cargo.get().length; i++) {
-			if (cargo.get()[i] == 1) {
+			if (cargo.get()[i] == 0) {
+				continue;
+			} else if (cargo.get()[i] == 1) {
 				g2.setColor(orange);
-			} else {
+			} else if (cargo.get()[i] == 2) {
 				g2.setColor(purple);
 			}
 			if (boatNum == 4) {
@@ -153,8 +160,16 @@ public class Boat extends RotatingPicture {
 
 		if (moves.size() == 0) {
 			if (ax() < 20 || ax() > Driver.screenW - 20) {
+				if (!cargo.hasCargo()) {
+					remove = true;
+					return;
+				}
 				addMove(new Position(Driver.screenW / 2, ay()));
 			} else if (ay() < 20 || ay() > Driver.screenH - 40) {
+				if (!cargo.hasCargo()) {
+					remove = true;
+					return;
+				}
 				addMove(new Position(ax(), Driver.screenH / 2));
 			}
 		}
@@ -238,6 +253,10 @@ class Cargo {
 		return false;
 	}
 
+	public boolean hasCargo() {
+		return hasCargo(1) || hasCargo(2);
+	}
+
 	public int[] get() {
 		return cargo;
 	}
@@ -251,28 +270,33 @@ class DockStamp {
 	int time;
 	int type;
 	boolean docked;
+	boolean done;
 
 	public DockStamp() {
 		time = 0;
 		type = 0;
 		docked = false;
+		done = false;
 	}
 
 	public void enter(DockSector d) {
-		Driver.display("boat docked");
 		time = 0;
 		type = d.type;
 		docked = true;
+		done = false;
 	}
 
-	public void time(Cargo c) {
-		if (docked) {
+	public boolean time(Cargo c) {
+		if (docked && c.hasCargo(type)) {
 			time++;
-			Driver.display("boat on dock " + time);
 			if (time > 200) {
 				time %= 200;
 				c.clearOne(type);
+				if (!c.hasCargo(type)) {
+					return true;
+				}
 			}
 		}
+		return false;
 	}
 }

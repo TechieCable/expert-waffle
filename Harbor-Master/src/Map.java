@@ -79,7 +79,7 @@ public class Map extends Picture {
 			test.highlight = 100;
 			return test;
 		}
-		test = overLand((int) (b.ax() + b.height), (int) (b.ay() + b.height));
+		test = overLand((int) (b.ax() + b.width), (int) (b.ay() + b.width));
 		if (test != null) {
 			test.highlight = 100;
 			return test;

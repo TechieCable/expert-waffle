@@ -1,4 +1,3 @@
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -177,12 +176,19 @@ class RotatingPicture extends Picture {
 		width = img.getWidth(null) * scaleSize;
 		height = img.getHeight(null) * scaleSize;
 		angle %= Math.PI * 2;
+		double tempAngle = Math.PI * 2 - angle;
+		tempAngle %= Math.PI * 2;
+		// Driver.display("" + (tempAngle * 180 / Math.PI));
 
 		move();
 		Graphics2D g2 = (Graphics2D) g;
 		g2.rotate(angle - Math.PI / 2, x + width / 2, y + height / 2);
 		g2.drawImage(img, tx, null);
 		g2.rotate(-(angle - Math.PI / 2), x + width / 2, y + height / 2);
+
+		int maxWidth = (int) (Math.abs(width * Math.cos(tempAngle)) + Math.abs(height * Math.cos(tempAngle)));
+		int maxHeight = (int) (Math.abs(width * Math.sin(tempAngle)) + Math.abs(height * Math.sin(tempAngle)));
+		g.drawRect(ax() - maxWidth / 2, ay() - maxHeight / 2, maxWidth, maxHeight);
 		update();
 	}
 }
