@@ -1,4 +1,5 @@
 import java.awt.Graphics;
+import java.awt.Polygon;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,6 +9,7 @@ public class Map extends Picture {
 	HashMap<String, LandSector> sectors = new HashMap<String, LandSector>();
 	ArrayList<DockSector> dockPoints = new ArrayList<DockSector>();
 	ArrayList<EntrySector> entryPoints = new ArrayList<EntrySector>();
+	ArrayList<LandPoly> landPolys = new ArrayList<LandPoly>();
 
 	public Map(String fileName, String sectorFileName) {
 		super(0, 0, fileName, 1);
@@ -29,10 +31,13 @@ public class Map extends Picture {
 					entryPoints.add(new EntrySector(s.next(), s.next()));
 					continue;
 				}
-				String y = s.next();
-				String d = s.next();
-				sectors.put(Sector.z.substring(x.length()) + x + Sector.z.substring(y.length()) + y,
-						new LandSector(x, y, d));
+				if (x.equals("l")) {
+					landPolys.add(new LandPoly(s.next()));
+				}
+//				String y = s.next();
+//				String d = s.next();
+//				sectors.put(Sector.z.substring(x.length()) + x + Sector.z.substring(y.length()) + y,
+//						new LandSector(x, y, d));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -74,6 +79,7 @@ public class Map extends Picture {
 	}
 
 	public LandSector overLand(Boat b) {
+		// test upper-left corner
 		LandSector test = overLand((int) (b.ax() - b.width), (int) (b.ay() - b.width));
 		if (test != null) {
 			test.highlight = 100;
@@ -92,6 +98,16 @@ public class Map extends Picture {
 		return entryPoints.get((int) (Math.random() * (entryPoints.size())));
 	}
 
+}
+
+class LandPoly extends Polygon {
+	public LandPoly(String points) {
+		String xPoints = points.substring(0, points.indexOf("],")).replace("[", "");
+		String yPoints = points.substring(points.indexOf("],")).replace("]", "").replace(",[", "");
+		System.out.println(xPoints);
+		System.out.println();
+		System.out.println(yPoints);
+	}
 }
 
 @SuppressWarnings("serial")

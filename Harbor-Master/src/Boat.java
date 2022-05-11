@@ -136,7 +136,7 @@ public class Boat extends RotatingPicture {
 	}
 
 	public void move() {
-		if (dockInfo.docked) {
+		if (true || dockInfo.docked) {
 			return;
 		}
 		if (checkTime > 0) {

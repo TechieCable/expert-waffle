@@ -12,6 +12,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.File;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -21,6 +22,9 @@ import javax.swing.Timer;
 @SuppressWarnings("serial")
 public class Driver extends JPanel implements ActionListener, KeyListener, MouseListener, MouseMotionListener {
 	public static int screenW = 1920, screenH = 1080;
+
+	ArrayList<Integer> Xcors = new ArrayList<Integer>();
+	ArrayList<Integer> Ycors = new ArrayList<Integer>();
 
 	public static int maxBoats = 1;
 
@@ -45,6 +49,12 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 				title2.paint(g);
 			}
 		}
+
+		g.setColor(Color.white);
+
+		g.drawPolygon(Xcors.stream().mapToInt(i -> i).toArray(), Ycors.stream().mapToInt(i -> i).toArray(),
+				Xcors.size());
+		display(Xcors.toString() + ", " + Ycors.toString());
 	}
 
 	public static void main(String[] arg) {
@@ -72,11 +82,11 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 
 		frame.setVisible(true);
 
-		try {
-			frame.getContentPane().setCursor(Toolkit.getDefaultToolkit()
-					.createCustomCursor(ImageIO.read(new File("Cursor.png")), new Point(0, 0), "blank cursor"));
-		} catch (Exception e) {
-		}
+//		try {
+//			frame.getContentPane().setCursor(Toolkit.getDefaultToolkit()
+//					.createCustomCursor(ImageIO.read(new File("Cursor.png")), new Point(0, 0), "blank cursor"));
+//		} catch (Exception e) {
+//		}
 	}
 
 	public void generate() {
@@ -123,6 +133,10 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 //		} else {
 //			sectors.remove(Sector.z.substring(x.length()) + x + Sector.z.substring(y.length()) + y);
 //		}
+		if (m.getButton() == 1) {
+			Xcors.add(m.getX());
+			Ycors.add(m.getY() - 22);
+		}
 
 		if (!playing && m.getX() > 805 && m.getY() > 770 && m.getX() < 1275 && m.getY() < 980) {
 			playing = true;
