@@ -47,6 +47,10 @@ public class Map extends Picture {
 	public void paint(Graphics g) {
 		super.paint(g);
 
+		for (LandPoly x : landPolys) {
+			g.drawPolygon(x);
+		}
+
 //		for (Entry<String, LandSector> s : sectors.entrySet()) {
 //			int[] cors = cors(s.getKey());
 //			s.getValue().highlight--;
@@ -102,11 +106,14 @@ public class Map extends Picture {
 
 class LandPoly extends Polygon {
 	public LandPoly(String points) {
-		String xPoints = points.substring(0, points.indexOf("],")).replace("[", "");
-		String yPoints = points.substring(points.indexOf("],")).replace("]", "").replace(",[", "");
-		System.out.println(xPoints);
-		System.out.println();
-		System.out.println(yPoints);
+		String[] xPoints = points.substring(0, points.indexOf("]:")).replace("[", "").split(",");
+		String[] yPoints = points.substring(points.indexOf("]:")).replace("]", "").replace(":[", "").split(",");
+		if (xPoints.length != yPoints.length) {
+			System.err.println("Polygon point arrays are not of equal length.");
+		}
+		for (int i = 0; i < xPoints.length; i++) {
+			super.addPoint(Integer.valueOf(xPoints[i]), Integer.valueOf(yPoints[i]));
+		}
 	}
 }
 

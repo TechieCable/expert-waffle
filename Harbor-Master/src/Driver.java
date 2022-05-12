@@ -71,7 +71,9 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 		frame.addKeyListener(this);
 		frame.addMouseListener(this);
 		frame.addMouseMotionListener(this);
-		frame.getContentPane().add(BorderLayout.NORTH, stat = new Label());
+		stat = new Label();
+//		frame.getContentPane().add(BorderLayout.NORTH, stat);
+//		stat.setSize(frame.getSize().width, stat.getSize().height);
 		stat.setSize(frame.getSize().width, stat.getSize().height);
 		t.start();
 
