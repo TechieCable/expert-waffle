@@ -26,7 +26,7 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 	ArrayList<Integer> Xcors = new ArrayList<Integer>();
 	ArrayList<Integer> Ycors = new ArrayList<Integer>();
 
-	public static int maxBoats = 1;
+	public static int maxBoats = 10;
 
 	static Label stat;
 	Game game;
@@ -49,12 +49,6 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 				title2.paint(g);
 			}
 		}
-
-		g.setColor(Color.white);
-
-		g.drawPolygon(Xcors.stream().mapToInt(i -> i).toArray(), Ycors.stream().mapToInt(i -> i).toArray(),
-				Xcors.size());
-		display(Xcors.toString() + ", " + Ycors.toString());
 	}
 
 	public static void main(String[] arg) {
@@ -72,8 +66,7 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 		frame.addMouseListener(this);
 		frame.addMouseMotionListener(this);
 		stat = new Label();
-//		frame.getContentPane().add(BorderLayout.NORTH, stat);
-//		stat.setSize(frame.getSize().width, stat.getSize().height);
+		frame.getContentPane().add(BorderLayout.NORTH, stat);
 		stat.setSize(frame.getSize().width, stat.getSize().height);
 		t.start();
 
@@ -84,11 +77,11 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 
 		frame.setVisible(true);
 
-//		try {
-//			frame.getContentPane().setCursor(Toolkit.getDefaultToolkit()
-//					.createCustomCursor(ImageIO.read(new File("Cursor.png")), new Point(0, 0), "blank cursor"));
-//		} catch (Exception e) {
-//		}
+		try {
+			frame.getContentPane().setCursor(Toolkit.getDefaultToolkit()
+					.createCustomCursor(ImageIO.read(new File("Cursor.png")), new Point(0, 0), "blank cursor"));
+		} catch (Exception e) {
+		}
 	}
 
 	public void generate() {
@@ -154,7 +147,7 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 	}
 
 	public void mousePressed(MouseEvent m) {
-		game.boatClickHandler(m);
+		game.boatPressHandler(m);
 	}
 
 	public void mouseReleased(MouseEvent m) {

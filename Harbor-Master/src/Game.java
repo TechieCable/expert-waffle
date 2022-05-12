@@ -1,4 +1,6 @@
 import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
@@ -36,8 +38,8 @@ public class Game {
 
 			// dock checks
 			if (b.cargo.hasCargo() && !b.dockInfo.docked) {
-				for (DockSector x : m.dockPoints) {
-					if (x.dock(b) && b.cargo.hasCargo(x.type)) {
+				for (DockPoly x : m.dockPolys) {
+					if (b.cargo.hasCargo(x.type) && x.isOver(b)) {
 						b.clearMoves();
 						b.x = x.dockX;
 						b.y = x.dockY;
@@ -49,24 +51,14 @@ public class Game {
 
 			if (b.checkTime == 0) {
 				// land checks
-				LandSector over = m.overLand(b);
-				if (over != null) {
+				if (m.overLand(b)) {
+					Position p = new Position((int) (b.ax() - 100 * Math.cos(b.angle - Math.PI / 4)),
+							(int) (b.ay() - 100 * Math.sin(b.angle - Math.PI / 4)));
 					b.clearMoves();
-					int dist = 200;
-					if (over.redirection == 1) {
-						b.addMove(new Position(b.ax() + dist, b.ay() - dist));
-						b.addMove(new Position(b.ax() + (dist + 20), b.ay() - (dist + 20)));
-					} else if (over.redirection == 2) {
-						b.addMove(new Position(b.ax() - dist, b.ay() - dist));
-						b.addMove(new Position(b.ax() - (dist + 20), b.ay() - (dist + 20)));
-					} else if (over.redirection == 3) {
-						b.addMove(new Position(b.ax() - dist, b.ay() + dist));
-						b.addMove(new Position(b.ax() - (dist + 20), b.ay() + (dist + 20)));
-					} else if (over.redirection == 4) {
-						b.addMove(new Position(b.ax() + dist, b.ay() + dist));
-						b.addMove(new Position(b.ax() + (dist + 20), b.ay() + (dist + 20)));
-					}
-					b.checkTime = 50;
+					b.target = p;
+					b.addMove(p);
+					b.addMove(p);
+					b.checkTime = 100;
 				}
 			}
 			b.paint(g);
@@ -79,7 +71,7 @@ public class Game {
 		m = new Map("map1.png", "map1.txt");
 	}
 
-	public void boatClickHandler(MouseEvent e) {
+	public void boatPressHandler(MouseEvent e) {
 		for (int i = 0; i < boats.size(); i++) {
 			if (boats.get(i).clicked(e.getX(), e.getY())) {
 				boats.get(i).clearMoves();

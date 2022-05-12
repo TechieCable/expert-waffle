@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -79,7 +80,15 @@ public class Boat extends RotatingPicture {
 	 * @return wasClicked
 	 */
 	public boolean clicked(int x, int y) {
-		return (x > ax() - this.width && y > ay() - this.width && x < ax() + this.width && y < ay() + this.width);
+		return getRect().contains(x, y);
+	}
+
+	public Rectangle getRect() {
+		double tempAngle = Math.PI * 2 - angle;
+		tempAngle %= Math.PI * 2;
+		int maxWidth = (int) Math.max(Math.abs(width * Math.sin(tempAngle)), Math.abs(height * Math.cos(tempAngle)));
+		int maxHeight = (int) Math.max(Math.abs(width * Math.cos(tempAngle)), Math.abs(height * Math.sin(tempAngle)));
+		return new Rectangle(ax() - maxWidth / 2, ay() - maxHeight / 2, maxWidth, maxHeight);
 	}
 
 	public void paint(Graphics g) {
@@ -136,7 +145,7 @@ public class Boat extends RotatingPicture {
 	}
 
 	public void move() {
-		if (true || dockInfo.docked) {
+		if (dockInfo.docked) {
 			return;
 		}
 		if (checkTime > 0) {
@@ -279,7 +288,7 @@ class DockStamp {
 		done = false;
 	}
 
-	public void enter(DockSector d) {
+	public void enter(DockPoly d) {
 		time = 0;
 		type = d.type;
 		docked = true;

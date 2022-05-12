@@ -168,6 +168,10 @@ class RotatingPicture extends Picture {
 		return (int) (y + height / 2);
 	}
 
+	public double aa() {
+		return (Math.PI * 2 - angle) % (Math.PI * 2);
+	}
+
 	public void rotateTo(double angle) {
 		this.angle = angle;
 	}
@@ -176,8 +180,8 @@ class RotatingPicture extends Picture {
 		width = img.getWidth(null) * scaleSize;
 		height = img.getHeight(null) * scaleSize;
 		angle %= Math.PI * 2;
-		double tempAngle = Math.PI * 2 - angle;
-		tempAngle %= Math.PI * 2;
+//		double tempAngle = Math.PI * 2 - angle;
+//		tempAngle %= Math.PI * 2;
 
 		move();
 		Graphics2D g2 = (Graphics2D) g;
