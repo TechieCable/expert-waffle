@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,6 +19,7 @@ public class Boat extends RotatingPicture {
 	Cargo cargo;
 	int boatNum;
 	boolean remove;
+	ArrayList<WakeBubble> wake = new ArrayList<WakeBubble>();
 
 	public Boat() {
 		this((int) (Math.random() * (Driver.screenW - 20 - 20 + 1)) + 20,
@@ -104,6 +106,13 @@ public class Boat extends RotatingPicture {
 
 		for (int i = 0; i < moves.size() - 1; i++) {
 			g.drawLine(moves.get(i).x, moves.get(i).y, moves.get(i + 1).x, moves.get(i + 1).y);
+		}
+		// #334195
+		// #020887
+		// #5299D3
+		for (int i = 0; i < wake.size(); i++) {
+			WakeBubble a = wake.get(i);
+			g.drawOval(a.x, a.y, a.time, a.time);
 		}
 
 		super.paint(g);
@@ -314,5 +323,19 @@ class DockStamp {
 			}
 		}
 		return false;
+	}
+}
+
+@SuppressWarnings("serial")
+class WakeBubble extends Point {
+	int time;
+
+	public WakeBubble(int x, int y, int time) {
+		super(x, y);
+		this.time = time;
+	}
+
+	public WakeBubble(int x, int y) {
+		this(x, y, 100);
 	}
 }

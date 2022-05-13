@@ -1,4 +1,3 @@
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Label;
@@ -68,7 +67,7 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 		frame.addMouseListener(this);
 		frame.addMouseMotionListener(this);
 		stat = new Label();
-		frame.getContentPane().add(BorderLayout.NORTH, stat);
+//		frame.getContentPane().add(BorderLayout.NORTH, stat);
 		stat.setSize(frame.getSize().width, stat.getSize().height);
 		t.start();
 
