@@ -139,6 +139,13 @@ public class Boat extends RotatingPicture {
 		dockInfo.docked = false;
 	}
 
+	public void setFocus(Position p) {
+		clearMoves();
+		target = p;
+		addMove(p);
+		addMove(p);
+	}
+
 	public void clearMoves() {
 		moves.clear();
 		target = new Position(ax(), ay());
@@ -167,21 +174,21 @@ public class Boat extends RotatingPicture {
 		x += speed * Math.cos(angle);
 		y += speed * Math.sin(angle);
 
-		if (moves.size() == 0) {
-			if (ax() < 20 || ax() > Driver.screenW - 20) {
-				if (!cargo.hasCargo()) {
-					remove = true;
-					return;
-				}
-				addMove(new Position(Driver.screenW / 2, ay()));
-			} else if (ay() < 20 || ay() > Driver.screenH - 40) {
-				if (!cargo.hasCargo()) {
-					remove = true;
-					return;
-				}
-				addMove(new Position(ax(), Driver.screenH / 2));
-			}
-		}
+//		if (moves.size() == 0) {
+//			if (ax() < 20 || ax() > Driver.screenW - 20) {
+//				if (!cargo.hasCargo()) {
+//					remove = true;
+//					return;
+//				}
+//				addMove(new Position(Driver.screenW / 2, ay()));
+//			} else if (ay() < 20 || ay() > Driver.screenH - 40) {
+//				if (!cargo.hasCargo()) {
+//					remove = true;
+//					return;
+//				}
+//				addMove(new Position(ax(), Driver.screenH / 2));
+//			}
+//		}
 
 	}
 

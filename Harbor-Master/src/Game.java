@@ -1,6 +1,4 @@
 import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
@@ -9,6 +7,7 @@ public class Game {
 	CursorDrag cursorDrag;
 	Map m;
 	int boatGenTime;
+	int cargo;
 
 	public Game() {
 		generate();
@@ -18,9 +17,7 @@ public class Game {
 		if (boatGenTime == 0 && boats.size() < Driver.maxBoats) {
 			EntrySector entry = m.randomEntry();
 			Boat b = new Boat(entry.x, entry.y, Boat.randomBoatNum());
-			b.clearMoves();
-			b.addMove(new Position(Driver.screenW / 2, Driver.screenH / 2));
-			b.addMove(new Position(Driver.screenW / 2, Driver.screenH / 2));
+			Driver.spawned = b;
 			boats.add(b);
 			boatGenTime = 500;
 		}
@@ -31,14 +28,14 @@ public class Game {
 
 		for (int i = 0; i < boats.size(); i++) {
 			Boat b = boats.get(i);
-			if (b.remove) {
-				boats.remove(i);
-				i--;
-			}
+//			if (b.remove) {
+//				boats.remove(i);
+//				i--;
+//			}
 
 			// dock checks
 			if (b.cargo.hasCargo() && !b.dockInfo.docked) {
-				for (DockPoly x : m.dockPolys) {
+				for (DockPoly x : m.docks) {
 					if (b.cargo.hasCargo(x.type) && x.isOver(b)) {
 						b.clearMoves();
 						b.x = x.dockX;
@@ -52,16 +49,21 @@ public class Game {
 			if (b.checkTime == 0) {
 				// land checks
 				if (m.overLand(b)) {
-					Position p = new Position((int) (b.ax() - 100 * Math.cos(b.angle - Math.PI / 4)),
-							(int) (b.ay() - 100 * Math.sin(b.angle - Math.PI / 4)));
-					b.clearMoves();
-					b.target = p;
-					b.addMove(p);
-					b.addMove(p);
+					b.setFocus(redirectionPos(b));
 					b.checkTime = 100;
 				}
 			}
 			b.paint(g);
+
+			if (b.moves.size() == 0
+					&& (b.ax() < 20 || b.ax() > Driver.screenW - 20 || b.ay() < 20 || b.ay() > Driver.screenH - 40)) {
+				if (!b.cargo.hasCargo()) {
+					boats.remove(i);
+					i--;
+				} else {
+					b.setFocus(redirectionPos(b));
+				}
+			}
 		}
 	}
 
@@ -69,6 +71,21 @@ public class Game {
 		boats = new ArrayList<Boat>();
 		cursorDrag = new CursorDrag();
 		m = new Map("map1.png", "map1.txt");
+	}
+
+	public Position redirectionPos(Boat b) {
+		Position p = new Position((int) (b.ax() - 100 * Math.cos(b.angle - Math.PI / 4)),
+				(int) (b.ay() - 100 * Math.sin(b.angle - Math.PI / 4)));
+		int angleItr = 1;
+		while (!m.inWater(p)) {
+			p = new Position((int) (b.ax() - 200 * Math.cos(b.angle - Math.PI / 4 - Math.PI * 2 * angleItr)),
+					(int) (b.ay() - 200 * Math.sin(b.angle - Math.PI / 4 - Math.PI * 2 * angleItr)));
+			angleItr++;
+			if (angleItr > 3) {
+				p = new Position(m.randomWaterPoint());
+			}
+		}
+		return p;
 	}
 
 	public void boatPressHandler(MouseEvent e) {

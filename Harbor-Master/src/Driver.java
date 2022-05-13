@@ -22,6 +22,7 @@ import javax.swing.Timer;
 @SuppressWarnings("serial")
 public class Driver extends JPanel implements ActionListener, KeyListener, MouseListener, MouseMotionListener {
 	public static int screenW = 1920, screenH = 1080;
+	public static Boat spawned;
 
 	ArrayList<Integer> Xcors = new ArrayList<Integer>();
 	ArrayList<Integer> Ycors = new ArrayList<Integer>();
@@ -49,6 +50,7 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 				title2.paint(g);
 			}
 		}
+		setStatus(spawned.toString());
 	}
 
 	public static void main(String[] arg) {

@@ -1,13 +1,16 @@
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.Rectangle;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Map extends Picture {
 	ArrayList<EntrySector> entryPoints = new ArrayList<EntrySector>();
-	ArrayList<LandPoly> landPolys = new ArrayList<LandPoly>();
-	ArrayList<DockPoly> dockPolys = new ArrayList<DockPoly>();
+	ArrayList<EPolygon> land = new ArrayList<EPolygon>();
+	ArrayList<DockPoly> docks = new ArrayList<DockPoly>();
+	ArrayList<EPolygon> water = new ArrayList<EPolygon>();
 
 	public Map(String fileName, String sectorFileName) {
 		super(0, 0, fileName, 1);
@@ -19,18 +22,14 @@ public class Map extends Picture {
 				String x = s.next();
 				if (x.equals("/")) {
 					s.nextLine();
-					continue;
-				}
-				if (x.equals("d")) {
-					dockPolys.add(new DockPoly(s.next(), s.next(), s.next(), s.next(), s.next()));
-					continue;
-				}
-				if (x.equals("e")) {
+				} else if (x.equals("d")) {
+					docks.add(new DockPoly(s.next(), s.next(), s.next(), s.next(), s.next()));
+				} else if (x.equals("e")) {
 					entryPoints.add(new EntrySector(s.next(), s.next()));
-					continue;
-				}
-				if (x.equals("l")) {
-					landPolys.add(new LandPoly(s.next()));
+				} else if (x.equals("l")) {
+					land.add(new EPolygon(s.next()));
+				} else if (x.equals("w")) {
+					water.add(new EPolygon(s.next()));
 				}
 			}
 		} catch (Exception e) {
@@ -41,25 +40,9 @@ public class Map extends Picture {
 	public void paint(Graphics g) {
 		super.paint(g);
 
-		for (LandPoly x : landPolys) {
-			g.drawPolygon(x);
-		}
-		for (DockPoly x : dockPolys) {
-			g.drawPolygon(x);
-		}
-
-//		for (DockSector x : dockPoints) {
-//			if (x.type == 1) {
-//				g.setColor(Boat.orange);
-//			} else {
-//				g.setColor(Boat.purple);
-//			}
-//			g.fillRect(x.x - Sector.width / 2, x.y - Sector.width / 2, Sector.width, Sector.width);
-//			g.setColor(Color.WHITE);
-//			g.fillRect(x.dockX - Sector.width / 2, x.dockY - Sector.width / 2, Sector.width, Sector.width);
-//		}
 //		for (EntrySector x : entryPoints) {
-//			g.fillRect(x.x - Sector.width / 2, x.y - Sector.width / 2, Sector.width, Sector.width);
+//			g.setColor(Color.white);
+//			g.fillOval(x.x - Sector.width / 2, x.y - Sector.width / 2, Sector.width, Sector.width);
 //		}
 	}
 
@@ -72,8 +55,17 @@ public class Map extends Picture {
 		return entryPoints.get((int) (Math.random() * (entryPoints.size())));
 	}
 
+	public boolean overLand(Point p) {
+		for (EPolygon x : land) {
+			if (x.contains(p)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public boolean overLand(Boat b) {
-		for (LandPoly x : landPolys) {
+		for (EPolygon x : land) {
 			if (x.intersects(b.getRect())) {
 				return true;
 			}
@@ -81,6 +73,25 @@ public class Map extends Picture {
 		return false;
 	}
 
+	public boolean inWater(Point p) {
+		for (EPolygon x : water) {
+			if (x.contains(p)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public Point randomWaterPoint() {
+		EPolygon rand = water.get((int) (Math.random() * water.size()));
+		Rectangle r = rand.getBounds();
+		Point res = new Point(-100, -100);
+		while (!rand.contains(res)) {
+			res.x = (int) (Math.random() * r.width) + r.x;
+			res.y = (int) (Math.random() * r.height) + r.y;
+		}
+		return res;
+	}
 }
 
 @SuppressWarnings("serial")
@@ -95,11 +106,9 @@ class EPolygon extends Polygon {
 			super.addPoint(Integer.valueOf(xPoints[i]), Integer.valueOf(yPoints[i]));
 		}
 	}
-}
 
-class LandPoly extends EPolygon {
-	public LandPoly(String points) {
-		super(points);
+	public boolean isOver(Boat b) {
+		return this.intersects(b.getRect());
 	}
 }
 
@@ -114,10 +123,6 @@ class DockPoly extends EPolygon {
 		this.dockY = Integer.valueOf(dockY);
 		this.angle = Integer.valueOf(angle) * Math.PI / 180;
 		this.type = Integer.valueOf(type);
-	}
-
-	public boolean isOver(Boat b) {
-		return this.intersects(b.getRect());
 	}
 
 }

@@ -97,8 +97,8 @@ public class MapEditor extends JPanel implements ActionListener, KeyListener, Mo
 
 		frame.setVisible(true);
 
-		while (m.landPolys.size() > 0) {
-			Polygon x = m.landPolys.remove(0);
+		while (m.land.size() > 0) {
+			Polygon x = m.land.remove(0);
 			polygons.add(new PointedPolygon(x.xpoints, x.ypoints, x.npoints));
 		}
 
