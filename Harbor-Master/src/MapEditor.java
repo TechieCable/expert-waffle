@@ -23,11 +23,13 @@ import javax.swing.Timer;
 public class MapEditor extends JPanel implements ActionListener, KeyListener, MouseListener, MouseMotionListener {
 	public static int screenW = 1920, screenH = 1080;
 
-	Map m = new Map("map1.png", "map1.txt");
+	Map m = new Map(2);
 	ArrayList<PointedPolygon> polygons = new ArrayList<PointedPolygon>();
+	ArrayList<Sector> entrySectors = new ArrayList<Sector>();
 	Rectangle infoSection = new Rectangle(10, 10, 250, 25);
 	boolean draggingInfoSection = false;
 	Point mouseDragPoint = new Point();
+	Point mouse = new Point();
 
 	int currPolygon = 0;
 
@@ -55,6 +57,10 @@ public class MapEditor extends JPanel implements ActionListener, KeyListener, Mo
 		for (int i = 0; i < polygons.size(); i++) {
 			g.setColor(i == currPolygon ? Color.GREEN : Color.WHITE);
 			polygons.get(i).paint(g);
+		}
+		g.setColor(Color.WHITE);
+		for (Sector x : entrySectors) {
+			g.drawOval(x.x - x.width, x.y - x.width, x.width * 2, x.width * 2);
 		}
 
 		g.setColor(Color.WHITE);
@@ -101,6 +107,17 @@ public class MapEditor extends JPanel implements ActionListener, KeyListener, Mo
 			Polygon x = m.land.remove(0);
 			polygons.add(new PointedPolygon(x.xpoints, x.ypoints, x.npoints));
 		}
+		while (m.docks.size() > 0) {
+			Polygon x = m.docks.remove(0);
+			polygons.add(new PointedPolygon(x.xpoints, x.ypoints, x.npoints));
+		}
+		while (m.water.size() > 0) {
+			Polygon x = m.water.remove(0);
+			polygons.add(new PointedPolygon(x.xpoints, x.ypoints, x.npoints));
+		}
+		while (m.entryPoints.size() > ) {
+			// TODO: finish this
+		}
 
 		messages.add(new Message("----------", 500));
 		messages.add(new Message("arrow keys change current", 500));
@@ -143,6 +160,8 @@ public class MapEditor extends JPanel implements ActionListener, KeyListener, Mo
 			break;
 		case 115:
 			break;
+		case 77:
+			messages.add(new Message(mouse + "", 100));
 		default:
 			System.out.println(m);
 			break;
@@ -188,6 +207,7 @@ public class MapEditor extends JPanel implements ActionListener, KeyListener, Mo
 	}
 
 	public void mouseMoved(MouseEvent m) {
+		mouse = m.getPoint();
 	}
 
 }

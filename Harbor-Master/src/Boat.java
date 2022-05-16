@@ -108,12 +108,17 @@ public class Boat extends RotatingPicture {
 		for (int i = 0; i < moves.size() - 1; i++) {
 			g.drawLine(moves.get(i).x, moves.get(i).y, moves.get(i + 1).x, moves.get(i + 1).y);
 		}
-		// #334195
-		// #020887
-		// #5299D3
+
 		for (int i = 0; i < wake.size(); i++) {
 			WakeBubble a = wake.get(i);
-			g.drawOval(a.x, a.y, a.time, a.time);
+			a.time--;
+			g.setColor(WakeBubble.colors[a.colorID]);
+			int radius = (int) (a.time / 10);
+			g.fillOval(a.x - radius / 2, a.y - radius / 2, radius, radius);
+			if (a.time <= 0) {
+				wake.remove(i);
+				i--;
+			}
 		}
 
 		super.paint(g);
@@ -180,6 +185,8 @@ public class Boat extends RotatingPicture {
 			}
 			this.rotateTo(target.angle(ax(), ay()));
 		}
+
+		wake.add(new WakeBubble(ax(), ay(), 400 / speed));
 
 		x += speed * Math.cos(angle);
 		y += speed * Math.sin(angle);
@@ -312,14 +319,23 @@ class DockStamp {
 
 @SuppressWarnings("serial")
 class WakeBubble extends Point {
+	// https://coolors.co/defffc-9bc9fd-7db2de-8dbce2-defffc
+	static final Color[] colors = { new Color(222, 255, 252), new Color(155, 201, 253), new Color(125, 178, 222),
+			new Color(141, 188, 226), new Color(222, 255, 252) };
 	int time;
+	int colorID;
 
 	public WakeBubble(int x, int y, int time) {
 		super(x, y);
 		this.time = time;
+		colorID = (int) (Math.random() * colors.length);
 	}
 
 	public WakeBubble(int x, int y) {
-		this(x, y, 100);
+		this(x, y, 200);
+	}
+
+	public WakeBubble(double x, double y) {
+		this((int) x, (int) y);
 	}
 }

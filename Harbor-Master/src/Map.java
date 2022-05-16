@@ -7,10 +7,14 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Map extends Picture {
-	ArrayList<EntrySector> entryPoints = new ArrayList<EntrySector>();
+	ArrayList<Sector> entryPoints = new ArrayList<Sector>();
 	ArrayList<EPolygon> land = new ArrayList<EPolygon>();
 	ArrayList<DockPoly> docks = new ArrayList<DockPoly>();
 	ArrayList<EPolygon> water = new ArrayList<EPolygon>();
+
+	public Map(int id) {
+		this("map" + id + ".png", "map" + id + ".txt");
+	}
 
 	public Map(String fileName, String sectorFileName) {
 		super(0, 0, fileName, 1);
@@ -25,7 +29,7 @@ public class Map extends Picture {
 				} else if (x.equals("d")) {
 					docks.add(new DockPoly(s.next(), s.next(), s.next(), s.next(), s.next()));
 				} else if (x.equals("e")) {
-					entryPoints.add(new EntrySector(s.next(), s.next()));
+					entryPoints.add(new Sector(s.next(), s.next()));
 				} else if (x.equals("l")) {
 					land.add(new EPolygon(s.next()));
 				} else if (x.equals("w")) {
@@ -51,7 +55,7 @@ public class Map extends Picture {
 				Integer.valueOf(s.substring(Sector.z.length())) };
 	}
 
-	public EntrySector randomEntry() {
+	public Sector randomEntry() {
 		return entryPoints.get((int) (Math.random() * (entryPoints.size())));
 	}
 
@@ -112,6 +116,7 @@ class EPolygon extends Polygon {
 	}
 }
 
+@SuppressWarnings("serial")
 class DockPoly extends EPolygon {
 	int dockX, dockY;
 	double angle;
@@ -140,13 +145,4 @@ class Sector extends Position {
 	public Sector(String x, String y) {
 		this(Integer.valueOf(x), Integer.valueOf(y));
 	}
-
-}
-
-@SuppressWarnings("serial")
-class EntrySector extends Sector {
-	public EntrySector(String x, String y) {
-		super(x, y);
-	}
-
 }

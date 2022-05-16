@@ -17,7 +17,7 @@ public class Game {
 
 	public void paint(Graphics g) {
 		if (boatGenTime == 0 && boats.size() < Driver.maxBoats) {
-			EntrySector entry = m.randomEntry();
+			Sector entry = m.randomEntry();
 			Boat b = new Boat(entry.x, entry.y, Boat.randomBoatNum());
 			boats.add(b);
 			boatGenTime = 500;
