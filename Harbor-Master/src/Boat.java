@@ -9,6 +9,7 @@ import java.util.Arrays;
 public class Boat extends RotatingPicture {
 	static final Color purple = new Color(167, 40, 238);
 	static final Color orange = new Color(255, 192, 0);
+	static final int unloadTime = 100;
 
 	int speed;
 	double da;
@@ -182,23 +183,6 @@ public class Boat extends RotatingPicture {
 
 		x += speed * Math.cos(angle);
 		y += speed * Math.sin(angle);
-
-//		if (moves.size() == 0) {
-//			if (ax() < 20 || ax() > Driver.screenW - 20) {
-//				if (!cargo.hasCargo()) {
-//					remove = true;
-//					return;
-//				}
-//				addMove(new Position(Driver.screenW / 2, ay()));
-//			} else if (ay() < 20 || ay() > Driver.screenH - 40) {
-//				if (!cargo.hasCargo()) {
-//					remove = true;
-//					return;
-//				}
-//				addMove(new Position(ax(), Driver.screenH / 2));
-//			}
-//		}
-
 	}
 
 	public void rotateTo(double angle) {
@@ -314,8 +298,8 @@ class DockStamp {
 	public boolean time(Cargo c) {
 		if (docked && c.hasCargo(type)) {
 			time++;
-			if (time > 200) {
-				time %= 200;
+			if (time > Boat.unloadTime) {
+				time %= Boat.unloadTime;
 				c.clearOne(type);
 				if (!c.hasCargo(type)) {
 					return true;

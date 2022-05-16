@@ -8,6 +8,8 @@ public class Game {
 	Map m;
 	int boatGenTime;
 	int cargo;
+	boolean gameOver;
+	boolean playing;
 
 	public Game() {
 		generate();
@@ -17,7 +19,6 @@ public class Game {
 		if (boatGenTime == 0 && boats.size() < Driver.maxBoats) {
 			EntrySector entry = m.randomEntry();
 			Boat b = new Boat(entry.x, entry.y, Boat.randomBoatNum());
-			Driver.spawned = b;
 			boats.add(b);
 			boatGenTime = 500;
 		}
@@ -28,10 +29,13 @@ public class Game {
 
 		for (int i = 0; i < boats.size(); i++) {
 			Boat b = boats.get(i);
-//			if (b.remove) {
-//				boats.remove(i);
-//				i--;
-//			}
+
+			for (int j = i + 1; j < boats.size(); j++) {
+				if (b.getRect().intersects(boats.get(j).getRect())) {
+					gameOver = true;
+					return;
+				}
+			}
 
 			// dock checks
 			if (b.cargo.hasCargo() && !b.dockInfo.docked) {
@@ -46,8 +50,8 @@ public class Game {
 				}
 			}
 
+			// land checks
 			if (b.checkTime == 0) {
-				// land checks
 				if (m.overLand(b)) {
 					b.setFocus(redirectionPos(b));
 					b.checkTime = 100;
@@ -55,6 +59,7 @@ public class Game {
 			}
 			b.paint(g);
 
+			// border checks
 			if (b.moves.size() == 0
 					&& (b.ax() < 20 || b.ax() > Driver.screenW - 20 || b.ay() < 20 || b.ay() > Driver.screenH - 40)) {
 				if (!b.cargo.hasCargo()) {
@@ -71,6 +76,8 @@ public class Game {
 		boats = new ArrayList<Boat>();
 		cursorDrag = new CursorDrag();
 		m = new Map("map1.png", "map1.txt");
+		gameOver = false;
+		playing = true;
 	}
 
 	public Position redirectionPos(Boat b) {

@@ -1,3 +1,4 @@
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Label;
@@ -21,7 +22,6 @@ import javax.swing.Timer;
 @SuppressWarnings("serial")
 public class Driver extends JPanel implements ActionListener, KeyListener, MouseListener, MouseMotionListener {
 	public static int screenW = 1920, screenH = 1080;
-	public static Boat spawned;
 
 	ArrayList<Integer> Xcors = new ArrayList<Integer>();
 	ArrayList<Integer> Ycors = new ArrayList<Integer>();
@@ -32,7 +32,7 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 	Game game;
 	Picture title1;
 	Picture title2;
-	boolean playing;
+	Picture gameOver;
 	boolean paused;
 	boolean titleHover;
 
@@ -40,7 +40,9 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, screenW, screenH);
 
-		if (playing) {
+		if (game.gameOver) {
+			gameOver.paint(g);
+		} else if (game.playing) {
 			game.paint(g);
 		} else {
 			if (!titleHover) {
@@ -49,11 +51,10 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 				title2.paint(g);
 			}
 		}
-		setStatus(spawned.toString());
 	}
 
+	@SuppressWarnings("unused")
 	public static void main(String[] arg) {
-		@SuppressWarnings("unused")
 		Driver d = new Driver();
 	}
 
@@ -89,7 +90,7 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 		game = new Game();
 		title1 = new Picture(0, 0, "Title.png", 1);
 		title2 = new Picture(0, 0, "Title_Highlighted.png", 1);
-		playing = true;
+		gameOver = new Picture(0, 0, "GameOver_Screen.png", 1);
 		paused = false;
 		titleHover = false;
 	}
@@ -110,7 +111,9 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 	}
 
 	public void keyPressed(KeyEvent m) {
-
+		if (m.getKeyCode() == 82) {
+			generate();
+		}
 	}
 
 	public void keyReleased(KeyEvent m) {
@@ -134,8 +137,8 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 			Ycors.add(m.getY() - 22);
 		}
 
-		if (!playing && m.getX() > 805 && m.getY() > 770 && m.getX() < 1275 && m.getY() < 980) {
-			playing = true;
+		if (!game.playing && m.getX() > 805 && m.getY() > 770 && m.getX() < 1275 && m.getY() < 980) {
+			game.playing = true;
 		}
 	}
 
@@ -160,7 +163,7 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 	}
 
 	public void mouseMoved(MouseEvent m) {
-		if (!playing && m.getX() > 805 && m.getY() > 770 && m.getX() < 1275 && m.getY() < 980) {
+		if (!game.playing && m.getX() > 805 && m.getY() > 770 && m.getX() < 1275 && m.getY() < 980) {
 			titleHover = true;
 		} else {
 			titleHover = false;
