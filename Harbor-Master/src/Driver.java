@@ -1,6 +1,7 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Label;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -30,26 +31,62 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 
 	static Label stat;
 	Game game;
-	Picture title1;
-	Picture title2;
+	MultiPicture titles;
 	Picture gameOver;
+	Picture mapSelection;
 	boolean paused;
 	boolean titleHover;
+	int screenNumber = 0;
+
+	boolean run = false;
 
 	public void paint(Graphics g) {
+		if (!run) {
+			titles.paint(g, 0);
+			titles.paint(g, 1);
+			run = true;
+		}
+
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, screenW, screenH);
 
+		// screenNumber
+		// 0: title screen
+		// 1: map selection
+		// 2: game play
+		// 3: game over
+
+		if (screenNumber == 1 && mapSelection.y > 0) {
+			titles.y -= 20;
+			mapSelection.y -= 20;
+		}
+
 		if (game.gameOver) {
-			gameOver.paint(g);
+			screenNumber = 3;
 		} else if (game.playing) {
+			screenNumber = 2;
+		}
+
+		switch (screenNumber) {
+		case 0:
+			if (!titleHover)
+				titles.paint(g, 0);
+			else
+				titles.paint(g, 1);
+			break;
+		case 1:
+			// map selection
+			titles.paint(g, 0);
+			mapSelection.paint(g);
+			break;
+		case 2:
 			game.paint(g);
-		} else {
-			if (!titleHover) {
-				title1.paint(g);
-			} else {
-				title2.paint(g);
-			}
+			break;
+		case 3:
+			// game over
+			gameOver.paint(g);
+		default:
+			break;
 		}
 	}
 
@@ -68,12 +105,16 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 		frame.addMouseListener(this);
 		frame.addMouseMotionListener(this);
 		stat = new Label();
-		frame.getContentPane().add(BorderLayout.NORTH, stat);
+//		frame.getContentPane().add(BorderLayout.NORTH, stat);
 		stat.setSize(frame.getSize().width, stat.getSize().height);
 		t.start();
 
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		frame.setUndecorated(true);
+
+		titles = new MultiPicture(0, 0, new String[] { "Title.png", "Title_Highlighted.png" }, 1);
+		gameOver = new Picture(0, 0, "GameOver_Screen.png", 1);
+		mapSelection = new Picture(0, 1080, "MapSelect.png", 1);
 
 		generate();
 
@@ -88,9 +129,6 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 
 	public void generate() {
 		game = new Game();
-		title1 = new Picture(0, 0, "Title.png", 1);
-		title2 = new Picture(0, 0, "Title_Highlighted.png", 1);
-		gameOver = new Picture(0, 0, "GameOver_Screen.png", 1);
 		paused = false;
 		titleHover = false;
 	}
@@ -138,7 +176,7 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 		}
 
 		if (!game.playing && m.getX() > 805 && m.getY() > 770 && m.getX() < 1275 && m.getY() < 980) {
-			game.playing = true;
+			screenNumber = 1;
 		}
 	}
 

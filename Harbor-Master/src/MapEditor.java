@@ -60,7 +60,7 @@ public class MapEditor extends JPanel implements ActionListener, KeyListener, Mo
 		}
 		g.setColor(Color.WHITE);
 		for (Sector x : entrySectors) {
-			g.drawOval(x.x - x.width, x.y - x.width, x.width * 2, x.width * 2);
+			g.drawOval(x.x - 400/2, x.y - 400/2, 400, 400);
 		}
 
 		g.setColor(Color.WHITE);
@@ -115,8 +115,8 @@ public class MapEditor extends JPanel implements ActionListener, KeyListener, Mo
 			Polygon x = m.water.remove(0);
 			polygons.add(new PointedPolygon(x.xpoints, x.ypoints, x.npoints));
 		}
-		while (m.entryPoints.size() > ) {
-			// TODO: finish this
+		while (m.entryPoints.size() > 0) {
+			entrySectors.add(m.entryPoints.remove(0));
 		}
 
 		messages.add(new Message("----------", 500));

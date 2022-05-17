@@ -149,6 +149,23 @@ public class Picture {
 	}
 }
 
+class MultiPicture extends Picture {
+	protected Image[] imgs;
+
+	public MultiPicture(int x, int y, String[] fileNames, int scaleSize) {
+		super(x, y, fileNames[0], scaleSize);
+		imgs = new Image[fileNames.length];
+		for (int i = 0; i < fileNames.length; i++) {
+			imgs[i] = getImage("/imgs/" + fileNames[i]);
+		}
+	}
+
+	public void paint(Graphics g, int index) {
+		img = imgs[index];
+		super.paint(g);
+	}
+}
+
 class RotatingPicture extends Picture {
 	protected double angle;
 

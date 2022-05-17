@@ -15,6 +15,14 @@ public class Game {
 		generate();
 	}
 
+	public void generate() {
+		boats = new ArrayList<Boat>();
+		cursorDrag = new CursorDrag();
+		m = new Map("map1.png", "map1.txt");
+		gameOver = false;
+		playing = false;
+	}
+
 	public void paint(Graphics g) {
 		if (boatGenTime == 0 && boats.size() < Driver.maxBoats) {
 			Sector entry = m.randomEntry();
@@ -70,14 +78,6 @@ public class Game {
 				}
 			}
 		}
-	}
-
-	public void generate() {
-		boats = new ArrayList<Boat>();
-		cursorDrag = new CursorDrag();
-		m = new Map("map1.png", "map1.txt");
-		gameOver = false;
-		playing = true;
 	}
 
 	public Position redirectionPos(Boat b) {
