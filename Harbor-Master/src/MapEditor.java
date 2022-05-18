@@ -23,7 +23,7 @@ import javax.swing.Timer;
 public class MapEditor extends JPanel implements ActionListener, KeyListener, MouseListener, MouseMotionListener {
 	public static int screenW = 1920, screenH = 1080;
 
-	Map m = new Map(2);
+	Map m = new Map("Title.png", "blank.txt");
 	ArrayList<PointedPolygon> polygons = new ArrayList<PointedPolygon>();
 	ArrayList<Sector> entrySectors = new ArrayList<Sector>();
 	Rectangle infoSection = new Rectangle(10, 10, 250, 25);

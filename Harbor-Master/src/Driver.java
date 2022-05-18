@@ -1,9 +1,8 @@
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.Label;
 import java.awt.Point;
+import java.awt.Polygon;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,6 +11,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -21,8 +22,16 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 @SuppressWarnings("serial")
-public class Driver extends JPanel implements ActionListener, KeyListener, MouseListener, MouseMotionListener {
+public class Driver extends JPanel
+		implements ActionListener, KeyListener, MouseListener, MouseMotionListener, MouseWheelListener {
 	public static int screenW = 1920, screenH = 1080;
+
+	Polygon titlePoly = new Polygon(
+			new int[] { 838, 838, 828, 820, 816, 840, 919, 971, 985, 1017, 1039, 1119, 1224, 1244, 1234, 1238, 1226,
+					1249, 1240, 1227, 1224, 1206, 1198, 1157, 1143, 1132, 1073, 1052, 1040, 955, 934, 906, 888, 873 },
+			new int[] { 751, 792, 834, 872, 901, 898, 914, 911, 915, 928, 935, 935, 933, 926, 894, 865, 842, 783, 765,
+					777, 797, 803, 784, 775, 782, 781, 773, 781, 773, 765, 767, 755, 754, 743 },
+			34);
 
 	ArrayList<Integer> Xcors = new ArrayList<Integer>();
 	ArrayList<Integer> Ycors = new ArrayList<Integer>();
@@ -34,11 +43,14 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 	MultiPicture titles;
 	Picture gameOver;
 	Picture mapSelection;
+	Picture bubbles;
 	boolean paused;
 	boolean titleHover;
 	int screenNumber = 0;
 
 	boolean run = false;
+
+	int scrollSpeed = 20;
 
 	public void paint(Graphics g) {
 		if (!run) {
@@ -56,11 +68,6 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 		// 2: game play
 		// 3: game over
 
-		if (screenNumber == 1 && mapSelection.y > 0) {
-			titles.y -= 20;
-			mapSelection.y -= 20;
-		}
-
 		if (game.gameOver) {
 			screenNumber = 3;
 		} else if (game.playing) {
@@ -76,7 +83,13 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 			break;
 		case 1:
 			// map selection
-			titles.paint(g, 0);
+			if (mapSelection.y > 0) {
+				titles.y -= scrollSpeed;
+				bubbles.y -= scrollSpeed;
+				mapSelection.y -= scrollSpeed;
+				titles.paint(g, 0);
+				bubbles.paint(g);
+			}
 			mapSelection.paint(g);
 			break;
 		case 2:
@@ -114,7 +127,8 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 
 		titles = new MultiPicture(0, 0, new String[] { "Title.png", "Title_Highlighted.png" }, 1);
 		gameOver = new Picture(0, 0, "GameOver_Screen.png", 1);
-		mapSelection = new Picture(0, 1080, "MapSelect.png", 1);
+		mapSelection = new Picture(0, 1080 * 2, "MapSelect.png", 1);
+		bubbles = new Picture(0, 1080, "Bubbles.png", 1);
 
 		generate();
 
@@ -152,6 +166,10 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 		if (m.getKeyCode() == 82) {
 			generate();
 		}
+
+		if (screenNumber == 1) {
+			// TODO: add left/right mouse buttons to scroll through maps
+		}
 	}
 
 	public void keyReleased(KeyEvent m) {
@@ -163,19 +181,12 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 	}
 
 	public void mouseClicked(MouseEvent m) {
-//		String x = (m.getX() + 10) / Sector.width + "";
-//		String y = (m.getY() + 10) / Sector.width + "";
-//		if (m.getButton() == 1) {
-//			sectors.put(Sector.z.substring(x.length()) + x + Sector.z.substring(y.length()) + y, new Sector(x, y));
-//		} else {
-//			sectors.remove(Sector.z.substring(x.length()) + x + Sector.z.substring(y.length()) + y);
-//		}
 		if (m.getButton() == 1) {
 			Xcors.add(m.getX());
 			Ycors.add(m.getY() - 22);
 		}
 
-		if (!game.playing && m.getX() > 805 && m.getY() > 770 && m.getX() < 1275 && m.getY() < 980) {
+		if (screenNumber == 0 && titlePoly.contains(m.getPoint())) {
 			screenNumber = 1;
 		}
 	}
@@ -201,12 +212,15 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 	}
 
 	public void mouseMoved(MouseEvent m) {
-		if (!game.playing && m.getX() > 805 && m.getY() > 770 && m.getX() < 1275 && m.getY() < 980) {
+		if (screenNumber == 0 && titlePoly.contains(m.getPoint())) {
 			titleHover = true;
 		} else {
 			titleHover = false;
 		}
-		// display(m.getPoint() + "");
+	}
+
+	public void mouseWheelMoved(MouseWheelEvent m) {
+
 	}
 
 }
