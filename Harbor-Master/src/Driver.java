@@ -1,6 +1,5 @@
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.Label;
 import java.awt.Point;
 import java.awt.Polygon;
@@ -15,7 +14,6 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.File;
-import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -26,6 +24,8 @@ import javax.swing.Timer;
 public class Driver extends JPanel
 		implements ActionListener, KeyListener, MouseListener, MouseMotionListener, MouseWheelListener {
 	public static int screenW = 1920, screenH = 1080;
+	public static Color woodBrown = new Color(98, 65, 51);
+	public static Color seaBlue = new Color(0, 145, 221);
 
 	Polygon titlePoly = new Polygon(
 			new int[] { 838, 838, 828, 820, 816, 840, 919, 971, 985, 1017, 1039, 1119, 1224, 1244, 1234, 1238, 1226,
@@ -46,10 +46,9 @@ public class Driver extends JPanel
 	boolean titleHover;
 	int screenNumber = 0;
 
-	ArrayList<Image> maps = new ArrayList<Image>();
+	PictureScroller mapThumbs;
 
 	boolean run = false;
-	Point mouse = new Point();
 
 	int scrollSpeed = 20;
 
@@ -57,6 +56,7 @@ public class Driver extends JPanel
 		if (!run) {
 			titles.paint(g, 0);
 			titles.paint(g, 1);
+			mapThumbs.load(g);
 			run = true;
 		}
 
@@ -93,7 +93,13 @@ public class Driver extends JPanel
 				titles.paint(g, 0);
 				bubbles.paint(g);
 			}
+//			g.setColor(seaBlue);
+//			g.drawRect(mapSelection.x, mapSelection.y - (mapSelection.y > 0 ? scrollSpeed : 0),
+//					(int) mapSelection.width, (int) mapSelection.height);
 			mapSelection.paint(g);
+			if (mapSelection.y == 0) {
+				mapThumbs.paint(g);
+			}
 			break;
 		case 2:
 			game.paint(g);
@@ -104,11 +110,6 @@ public class Driver extends JPanel
 		default:
 			break;
 		}
-
-//		mouse alignment
-//		g.drawLine(mouse.x - 20, mouse.y, mouse.x + 20, mouse.y);
-//		g.drawLine(mouse.x, mouse.y - 20, mouse.x, mouse.y + 20);
-//		g.drawOval(mouse.x - 20, mouse.y - 20, 40, 40);
 	}
 
 	@SuppressWarnings("unused")
@@ -125,6 +126,7 @@ public class Driver extends JPanel
 		frame.addKeyListener(this);
 		frame.addMouseListener(this);
 		frame.addMouseMotionListener(this);
+		frame.addMouseWheelListener(this);
 		stat = new Label();
 //		frame.getContentPane().add(BorderLayout.NORTH, stat);
 		stat.setSize(frame.getSize().width, stat.getSize().height);
@@ -138,8 +140,9 @@ public class Driver extends JPanel
 		mapSelection = new Picture(0, 1080 * 2, "MapSelect.png", 1);
 		bubbles = new Picture(0, 1080, "Bubbles.png", 1);
 
-		maps.add(Picture.getImg("/imgs/map1.png"));
-		maps.add(Picture.getImg("/imgs/map2.png"));
+		mapThumbs = new PictureScroller(520, 360, 0.4);
+		mapThumbs.add("map1.png");
+		mapThumbs.add("map2.png");
 
 		generate();
 
@@ -183,12 +186,11 @@ public class Driver extends JPanel
 		}
 
 		if (screenNumber == 1) {
-			// TODO: add left/right mouse buttons to scroll through maps
 			System.out.println(m);
 			if (m.getKeyCode() == 37) { // left
-
+				mapThumbs.changeCurrent(-1);
 			} else if (m.getKeyCode() == 39) { // right
-
+				mapThumbs.changeCurrent(1);
 			}
 		}
 	}
@@ -204,6 +206,9 @@ public class Driver extends JPanel
 	public void mouseClicked(MouseEvent m) {
 		if (screenNumber == 0 && titlePoly.contains(m.getPoint())) {
 			screenNumber = 1;
+		} else if (screenNumber == 1 && mapThumbs.getCurrent().toRectangle().contains(m.getPoint())) {
+			game.m = new Map(mapThumbs.current + 1);
+			screenNumber = 2;
 		}
 	}
 
@@ -228,7 +233,6 @@ public class Driver extends JPanel
 	}
 
 	public void mouseMoved(MouseEvent m) {
-		mouse = m.getPoint();
 		if (screenNumber == 0 && titlePoly.contains(m.getPoint())) {
 			titleHover = true;
 		} else {
@@ -237,7 +241,9 @@ public class Driver extends JPanel
 	}
 
 	public void mouseWheelMoved(MouseWheelEvent m) {
-
+		if (screenNumber == 1) {
+			mapThumbs.changeCurrent(m.getWheelRotation());
+		}
 	}
 
 }

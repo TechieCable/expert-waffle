@@ -1,9 +1,11 @@
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class Picture {
 	protected Image img;
@@ -147,6 +149,10 @@ public class Picture {
 	public double height() {
 		return height;
 	}
+
+	public Rectangle toRectangle() {
+		return new Rectangle(x, y, (int) width, (int) height);
+	}
 }
 
 class MultiPicture extends Picture {
@@ -163,6 +169,74 @@ class MultiPicture extends Picture {
 	public void paint(Graphics g, int index) {
 		img = imgs[index];
 		super.paint(g);
+	}
+}
+
+class PictureScroller {
+	static Rectangle frame = new Rectangle(0, 0, Driver.screenW, Driver.screenH);
+	ArrayList<Picture> pics = new ArrayList<Picture>();
+	int startX, startY;
+	double scaleSize;
+	int current;
+
+	public PictureScroller(int startX, int startY, double scaleSize) {
+		this.startX = startX;
+		this.startY = startY;
+		this.scaleSize = scaleSize;
+		current = 0;
+	}
+
+	public void add(String fileName) {
+		if (pics.size() > 0) {
+			Picture last = pics.get(pics.size() - 1);
+			pics.add(new Picture(last.x + Driver.screenW * 3 / 4, last.y, fileName, scaleSize));
+		} else {
+			pics.add(new Picture(startX, startY, fileName, scaleSize));
+		}
+	}
+
+	public void load(Graphics g) {
+		for (Picture x : pics) {
+			x.paint(g);
+		}
+	}
+
+	public void paint(Graphics g) {
+		if (pics.size() == 0)
+			return;
+		int move = 20;
+		if (pics.get(current).x > startX) {
+			move *= -1;
+		} else if (pics.get(current).x < startX) {
+			move *= 1;
+		} else {
+			move *= 0;
+		}
+		for (Picture x : pics) {
+			x.x += move;
+			if (PictureScroller.frame.intersects(new Rectangle(x.x, x.y, (int) x.width, (int) x.height))) {
+				g.setColor(Driver.woodBrown);
+				g.fillRect(x.x - 4 - move, x.y - 4, (int) (x.width + 8), (int) (x.height + 8));
+				x.paint(g);
+			}
+		}
+	}
+
+	public void changeCurrent(int direction) {
+		if (pics.get(current).x != startX)
+			return;
+		current += direction;
+		if (current < 0) {
+			current = pics.size() - 1;
+		} else if (current > pics.size() - 1) {
+			current = 0;
+		}
+	}
+
+	public Picture getCurrent() {
+		if (pics.size() == 0)
+			return null;
+		return pics.get(current);
 	}
 }
 
