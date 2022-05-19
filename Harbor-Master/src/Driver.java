@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Label;
 import java.awt.Point;
 import java.awt.Polygon;
@@ -33,9 +34,6 @@ public class Driver extends JPanel
 					777, 797, 803, 784, 775, 782, 781, 773, 781, 773, 765, 767, 755, 754, 743 },
 			34);
 
-	ArrayList<Integer> Xcors = new ArrayList<Integer>();
-	ArrayList<Integer> Ycors = new ArrayList<Integer>();
-
 	public static int maxBoats = 10;
 
 	static Label stat;
@@ -48,7 +46,10 @@ public class Driver extends JPanel
 	boolean titleHover;
 	int screenNumber = 0;
 
+	ArrayList<Image> maps = new ArrayList<Image>();
+
 	boolean run = false;
+	Point mouse = new Point();
 
 	int scrollSpeed = 20;
 
@@ -73,6 +74,8 @@ public class Driver extends JPanel
 		} else if (game.playing) {
 			screenNumber = 2;
 		}
+
+		// TODO: paint map thumbnails in map selection page
 
 		switch (screenNumber) {
 		case 0:
@@ -101,6 +104,11 @@ public class Driver extends JPanel
 		default:
 			break;
 		}
+
+//		mouse alignment
+//		g.drawLine(mouse.x - 20, mouse.y, mouse.x + 20, mouse.y);
+//		g.drawLine(mouse.x, mouse.y - 20, mouse.x, mouse.y + 20);
+//		g.drawOval(mouse.x - 20, mouse.y - 20, 40, 40);
 	}
 
 	@SuppressWarnings("unused")
@@ -130,14 +138,18 @@ public class Driver extends JPanel
 		mapSelection = new Picture(0, 1080 * 2, "MapSelect.png", 1);
 		bubbles = new Picture(0, 1080, "Bubbles.png", 1);
 
+		maps.add(Picture.getImg("/imgs/map1.png"));
+		maps.add(Picture.getImg("/imgs/map2.png"));
+
 		generate();
 
 		frame.setVisible(true);
 
 		try {
 			frame.getContentPane().setCursor(Toolkit.getDefaultToolkit()
-					.createCustomCursor(ImageIO.read(new File("Cursor.png")), new Point(0, 0), "blank cursor"));
+					.createCustomCursor(ImageIO.read(new File("Cursor.png")), new Point(16, 16), "blank cursor"));
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -145,6 +157,9 @@ public class Driver extends JPanel
 		game = new Game();
 		paused = false;
 		titleHover = false;
+		screenNumber = 0;
+		mapSelection.y = 1080 * 2;
+		bubbles.y = 1080;
 	}
 
 	public static void display(String s) {
@@ -169,6 +184,12 @@ public class Driver extends JPanel
 
 		if (screenNumber == 1) {
 			// TODO: add left/right mouse buttons to scroll through maps
+			System.out.println(m);
+			if (m.getKeyCode() == 37) { // left
+
+			} else if (m.getKeyCode() == 39) { // right
+
+			}
 		}
 	}
 
@@ -181,11 +202,6 @@ public class Driver extends JPanel
 	}
 
 	public void mouseClicked(MouseEvent m) {
-		if (m.getButton() == 1) {
-			Xcors.add(m.getX());
-			Ycors.add(m.getY() - 22);
-		}
-
 		if (screenNumber == 0 && titlePoly.contains(m.getPoint())) {
 			screenNumber = 1;
 		}
@@ -212,6 +228,7 @@ public class Driver extends JPanel
 	}
 
 	public void mouseMoved(MouseEvent m) {
+		mouse = m.getPoint();
 		if (screenNumber == 0 && titlePoly.contains(m.getPoint())) {
 			titleHover = true;
 		} else {
