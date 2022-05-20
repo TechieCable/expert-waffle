@@ -50,10 +50,24 @@ public class Game {
 				for (DockPoly x : m.docks) {
 					if (b.cargo.hasCargo(x.type) && x.isOver(b)) {
 						b.clearMoves();
-						b.x = x.dockX;
-						b.y = x.dockY;
-						b.angle = x.angle;
-						b.dockInfo.enter(x);
+						if (x.snap(b)) {
+							b.ax(x.dockX);
+							b.ay(x.dockY);
+							b.angle = x.angle;
+							b.dockInfo.enter(x);
+						} else {
+							// drift boat into place
+							if (x.dockX - b.ax() > 5) {
+								b.x += 1;
+							} else if (b.ax() - x.dockX > 5) {
+								b.x -= 1;
+							}
+							if (x.dockY - b.ay() > 5) {
+								b.y += 1;
+							} else if (b.ay() - x.dockY > 5) {
+								b.y -= 1;
+							}
+						}
 					}
 				}
 			}

@@ -166,6 +166,12 @@ class MultiPicture extends Picture {
 		}
 	}
 
+	/**
+	 * paints the picture at the given index
+	 * 
+	 * @param g
+	 * @param index
+	 */
 	public void paint(Graphics g, int index) {
 		img = imgs[index];
 		super.paint(g);
@@ -186,6 +192,11 @@ class PictureScroller {
 		current = 0;
 	}
 
+	/**
+	 * add a picture to the scroller
+	 * 
+	 * @param fileName
+	 */
 	public void add(String fileName) {
 		if (pics.size() > 0) {
 			Picture last = pics.get(pics.size() - 1);
@@ -195,12 +206,24 @@ class PictureScroller {
 		}
 	}
 
+	/**
+	 * load all the pictures to avoid temporary blank screen when the pictures are
+	 * first called
+	 * 
+	 * @param g
+	 */
 	public void load(Graphics g) {
 		for (Picture x : pics) {
 			x.paint(g);
 		}
 	}
 
+	/**
+	 * paint all pictures that are on the screen and move the pictures to corrent
+	 * position
+	 * 
+	 * @param g
+	 */
 	public void paint(Graphics g) {
 		if (pics.size() == 0)
 			return;
@@ -222,6 +245,11 @@ class PictureScroller {
 		}
 	}
 
+	/**
+	 * specify a new picture to look at
+	 * 
+	 * @param direction
+	 */
 	public void changeCurrent(int direction) {
 		if (pics.get(current).x != startX)
 			return;
@@ -255,8 +283,16 @@ class RotatingPicture extends Picture {
 		return (int) (x + width / 2);
 	}
 
+	public void ax(int x) {
+		this.x = (int) (x - width / 2);
+	}
+
 	public int ay() {
 		return (int) (y + height / 2);
+	}
+
+	public void ay(int y) {
+		this.y = (int) (y - height / 2);
 	}
 
 	public double aa() {
@@ -271,8 +307,6 @@ class RotatingPicture extends Picture {
 		width = img.getWidth(null) * scaleSize;
 		height = img.getHeight(null) * scaleSize;
 		angle %= Math.PI * 2;
-//		double tempAngle = Math.PI * 2 - angle;
-//		tempAngle %= Math.PI * 2;
 
 		move();
 		Graphics2D g2 = (Graphics2D) g;
@@ -280,9 +314,6 @@ class RotatingPicture extends Picture {
 		g2.drawImage(img, tx, null);
 		g2.rotate(-(angle - Math.PI / 2), x + width / 2, y + height / 2);
 
-//		int maxWidth = (int) Math.max(Math.abs(width * Math.sin(tempAngle)), Math.abs(height * Math.cos(tempAngle)));
-//		int maxHeight = (int) Math.max(Math.abs(width * Math.cos(tempAngle)), Math.abs(height * Math.sin(tempAngle)));
-//		g.drawRect(ax() - maxWidth / 2, ay() - maxHeight / 2, maxWidth, maxHeight);
 		update();
 	}
 }

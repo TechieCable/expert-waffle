@@ -23,9 +23,10 @@ import javax.swing.Timer;
 public class MapEditor extends JPanel implements ActionListener, KeyListener, MouseListener, MouseMotionListener {
 	public static int screenW = 1920, screenH = 1080;
 
-	Map m = new Map("Title.png", "blank.txt");
+	Map m = new Map(1);
 	ArrayList<PointedPolygon> polygons = new ArrayList<PointedPolygon>();
 	ArrayList<Sector> entrySectors = new ArrayList<Sector>();
+	ArrayList<Point> snapPoint = new ArrayList<Point>();
 	Rectangle infoSection = new Rectangle(10, 10, 250, 25);
 	boolean draggingInfoSection = false;
 	Point mouseDragPoint = new Point();
@@ -43,10 +44,6 @@ public class MapEditor extends JPanel implements ActionListener, KeyListener, Mo
 			currPolygon = polygons.size() - 1;
 		}
 
-		for (Message m : messages) {
-			m.time--;
-		}
-
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, screenW, screenH);
 
@@ -60,26 +57,25 @@ public class MapEditor extends JPanel implements ActionListener, KeyListener, Mo
 		}
 		g.setColor(Color.WHITE);
 		for (Sector x : entrySectors) {
-			g.drawOval(x.x - 400/2, x.y - 400/2, 400, 400);
+			g.drawOval(x.x - 400 / 2, x.y - 400 / 2, 400, 400);
 		}
-
-		g.setColor(Color.WHITE);
-		g.fillRect(infoSection.x, infoSection.y, infoSection.width, infoSection.height);
+		for (Point x : snapPoint) {
+			g.drawOval(x.x - 5, x.y - 5, 10, 10);
+		}
 
 		g.setColor(Color.BLACK);
+		g.fillRect(infoSection.x, infoSection.y, infoSection.width, infoSection.height);
+
 		g.setFont(new Font("Dialog", Font.BOLD, 16));
 		for (int i = 0; i < messages.size(); i++) {
-			messages.get(i).time--;
-			if (messages.get(i).time <= 0) {
+			g.setColor(messages.get(i).color());
+			g.drawString(messages.get(i).message(), 10, 20 + 20 * i);
+			messages.get(i).incTime();
+			if (messages.get(i).time() <= 0) {
 				messages.remove(i);
 				i--;
-				continue;
 			}
-			g.drawString(messages.get(i).message, infoSection.x + 5, infoSection.y + 15 + 20 * i);
 		}
-
-		messages.add(0, new Message("Currently editing polygon #" + currPolygon, 3));
-
 	}
 
 	public static void main(String[] arg) {
@@ -108,8 +104,9 @@ public class MapEditor extends JPanel implements ActionListener, KeyListener, Mo
 			polygons.add(new PointedPolygon(x.xpoints, x.ypoints, x.npoints));
 		}
 		while (m.docks.size() > 0) {
-			Polygon x = m.docks.remove(0);
+			DockPoly x = m.docks.remove(0);
 			polygons.add(new PointedPolygon(x.xpoints, x.ypoints, x.npoints));
+			snapPoint.add(new Point(x.dockX, x.dockY));
 		}
 		while (m.water.size() > 0) {
 			Polygon x = m.water.remove(0);
@@ -119,16 +116,15 @@ public class MapEditor extends JPanel implements ActionListener, KeyListener, Mo
 			entrySectors.add(m.entryPoints.remove(0));
 		}
 
-		messages.add(new Message("----------", 500));
-		messages.add(new Message("arrow keys change current", 500));
-		messages.add(new Message("polygon selection", 500));
-		messages.add(new Message("", 500));
-		messages.add(new Message("drag this box to move it", 500));
-		messages.add(new Message("", 500));
-		messages.add(new Message("hit n to create a new polygon", 500));
-		messages.add(new Message("", 500));
-		messages.add(new Message("left click to add a point", 500));
-		messages.add(new Message("right click to remove a point", 500));
+		messages.add(new Message("arrow keys change current", 250));
+		messages.add(new Message("polygon selection", 250));
+		messages.add(new Message("", 250));
+		messages.add(new Message("drag this box to move it", 250));
+		messages.add(new Message("", 250));
+		messages.add(new Message("hit n to create a new polygon", 250));
+		messages.add(new Message("", 250));
+		messages.add(new Message("left click to add a point", 250));
+		messages.add(new Message("right click to remove a point", 250));
 	}
 
 	Timer t = new Timer(16, this);
@@ -146,9 +142,17 @@ public class MapEditor extends JPanel implements ActionListener, KeyListener, Mo
 			currPolygon--;
 			break;
 		case 32: // space
-			messages.add(new Message("Printing polygons...", 100));
-			System.out.println("Printing all polygons:");
+			messages.add(new Message("Printing items...", 100));
+			System.out.println("Polygons:");
 			for (PointedPolygon x : polygons) {
+				System.out.println(x);
+			}
+			System.out.println("Entry sectors:");
+			for (Sector x : entrySectors) {
+				System.out.println(x);
+			}
+			System.out.println("Snap points:");
+			for (Point x : snapPoint) {
 				System.out.println(x);
 			}
 			break;
@@ -156,12 +160,16 @@ public class MapEditor extends JPanel implements ActionListener, KeyListener, Mo
 			messages.add(new Message("Added a new polygon", 100));
 			messages.add(new Message("Access it with the arrow keys", 200));
 			polygons.add(new PointedPolygon());
+		case 68: // d
+			messages.add(new Message("Removed a polygon", 100));
+			polygons.remove(currPolygon);
 		case 18:
 			break;
 		case 115:
 			break;
-		case 77:
+		case 77: // m
 			messages.add(new Message(mouse + "", 100));
+			break;
 		default:
 			System.out.println(m);
 			break;
@@ -255,15 +263,5 @@ class PointedPolygon {
 	public String toString() {
 		return Arrays.toString(getPolygon().xpoints).replace(" ", "") + ":"
 				+ Arrays.toString(getPolygon().ypoints).replace(" ", "");
-	}
-}
-
-class Message {
-	String message;
-	int time;
-
-	public Message(String message, int time) {
-		this.message = message;
-		this.time = time;
 	}
 }

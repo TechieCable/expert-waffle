@@ -124,7 +124,8 @@ public class Boat extends RotatingPicture {
 		super.paint(g);
 		Graphics2D g2 = (Graphics2D) g;
 		g2.rotate(angle - Math.PI / 2, x + width / 2, y + height / 2);
-		/** DRAW CARGO **/
+		/** ROTATED ITEMS **/
+		/* DRAW CARGO */
 		for (int i = 0; i < cargo.get().length; i++) {
 			if (cargo.get()[i] == 0) {
 				continue;

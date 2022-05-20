@@ -3,6 +3,7 @@ import java.awt.Graphics;
 import java.awt.Label;
 import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,6 +15,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.File;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -44,7 +46,16 @@ public class Driver extends JPanel
 	Picture bubbles;
 	boolean paused;
 	boolean titleHover;
+
+	// screenNumber
+	// 0: title screen
+	// 1: map selection
+	// 2: game play
+	// 3: game over
 	int screenNumber = 0;
+
+	Rectangle messageSection = new Rectangle(10, 10, 250, 25);
+	ArrayList<Message> messages = new ArrayList<Message>();
 
 	PictureScroller mapThumbs;
 
@@ -52,63 +63,74 @@ public class Driver extends JPanel
 
 	int scrollSpeed = 20;
 
+	/**
+	 * primary graphics driver
+	 */
 	public void paint(Graphics g) {
-		if (!run) {
-			titles.paint(g, 0);
-			titles.paint(g, 1);
-			mapThumbs.load(g);
-			run = true;
-		}
+		messageSection.height = 20 * messages.size();
 
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, screenW, screenH);
+		try {
+			if (!run) {
+				titles.paint(g, 0);
+				titles.paint(g, 1);
+				mapThumbs.load(g);
+				run = true;
+			}
 
-		// screenNumber
-		// 0: title screen
-		// 1: map selection
-		// 2: game play
-		// 3: game over
+			if (game.gameOver) {
+				screenNumber = 3;
+			} else if (game.playing) {
+				screenNumber = 2;
+			}
 
-		if (game.gameOver) {
-			screenNumber = 3;
-		} else if (game.playing) {
-			screenNumber = 2;
+			// TODO: paint map thumbnails in map selection page
+
+			switch (screenNumber) {
+			case 0:
+				if (!titleHover)
+					titles.paint(g, 0);
+				else
+					titles.paint(g, 1);
+				break;
+			case 1:
+				// map selection
+				if (mapSelection.y > 0) {
+					titles.y -= scrollSpeed;
+					bubbles.y -= scrollSpeed;
+					mapSelection.y -= scrollSpeed;
+					titles.paint(g, 0);
+					bubbles.paint(g);
+				}
+				mapSelection.paint(g);
+				if (mapSelection.y == 0) {
+					mapThumbs.paint(g);
+				}
+				break;
+			case 2:
+				game.paint(g);
+				break;
+			case 3:
+				// game over
+				gameOver.paint(g);
+			default:
+				break;
+			}
+		} catch (Exception e) {
+			messages.add(new Message(e.getMessage(), 200));
 		}
 
-		// TODO: paint map thumbnails in map selection page
-
-		switch (screenNumber) {
-		case 0:
-			if (!titleHover)
-				titles.paint(g, 0);
-			else
-				titles.paint(g, 1);
-			break;
-		case 1:
-			// map selection
-			if (mapSelection.y > 0) {
-				titles.y -= scrollSpeed;
-				bubbles.y -= scrollSpeed;
-				mapSelection.y -= scrollSpeed;
-				titles.paint(g, 0);
-				bubbles.paint(g);
+		g.setColor(Color.BLACK);
+		g.fillRect(messageSection.x, messageSection.y, messageSection.width, messageSection.height);
+		for (int i = 0; i < messages.size(); i++) {
+			g.setColor(messages.get(i).color());
+			g.drawString(messages.get(i).message(), 10, 20 + 20 * i);
+			messages.get(i).incTime();
+			if (messages.get(i).time() <= 0) {
+				messages.remove(i);
+				i--;
 			}
-//			g.setColor(seaBlue);
-//			g.drawRect(mapSelection.x, mapSelection.y - (mapSelection.y > 0 ? scrollSpeed : 0),
-//					(int) mapSelection.width, (int) mapSelection.height);
-			mapSelection.paint(g);
-			if (mapSelection.y == 0) {
-				mapThumbs.paint(g);
-			}
-			break;
-		case 2:
-			game.paint(g);
-			break;
-		case 3:
-			// game over
-			gameOver.paint(g);
-		default:
-			break;
 		}
 	}
 

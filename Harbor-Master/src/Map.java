@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Polygon;
@@ -44,10 +45,14 @@ public class Map extends Picture {
 	public void paint(Graphics g) {
 		super.paint(g);
 
+		g.setColor(Color.white);
 //		for (EntrySector x : entryPoints) {
-//			g.setColor(Color.white);
 //			g.fillOval(x.x - Sector.width / 2, x.y - Sector.width / 2, Sector.width, Sector.width);
 //		}
+		for (DockPoly x : docks) {
+			g.drawPolygon(x);
+			g.fillOval(x.dockX, x.dockY, 10, 10);
+		}
 	}
 
 	public static int[] cors(String s) {
@@ -130,6 +135,9 @@ class DockPoly extends EPolygon {
 		this.type = Integer.valueOf(type);
 	}
 
+	public boolean snap(Boat b) {
+		return (Math.sqrt(Math.pow(b.ax() - dockX, 2) + Math.pow(b.ay() - dockY, 2))) < 8;
+	}
 }
 
 @SuppressWarnings("serial")
