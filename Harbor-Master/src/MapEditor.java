@@ -28,7 +28,7 @@ public class MapEditor extends JPanel implements ActionListener, KeyListener, Mo
 	ArrayList<Sector> entrySectors = new ArrayList<Sector>();
 	ArrayList<Point> snapPoint = new ArrayList<Point>();
 	Rectangle infoSection = new Rectangle(10, 10, 250, 25);
-	boolean draggingInfoSection = false;
+	boolean dragger = false;
 	Point mouseDragPoint = new Point();
 	Point mouse = new Point();
 
@@ -69,7 +69,7 @@ public class MapEditor extends JPanel implements ActionListener, KeyListener, Mo
 		g.setFont(new Font("Dialog", Font.BOLD, 16));
 		for (int i = 0; i < messages.size(); i++) {
 			g.setColor(messages.get(i).color());
-			g.drawString(messages.get(i).message(), 10, 20 + 20 * i);
+			g.drawString(messages.get(i).message(), infoSection.x, infoSection.y + 10 + 20 * i);
 			messages.get(i).incTime();
 			if (messages.get(i).time() <= 0) {
 				messages.remove(i);
@@ -160,9 +160,11 @@ public class MapEditor extends JPanel implements ActionListener, KeyListener, Mo
 			messages.add(new Message("Added a new polygon", 100));
 			messages.add(new Message("Access it with the arrow keys", 200));
 			polygons.add(new PointedPolygon());
+			break;
 		case 68: // d
 			messages.add(new Message("Removed a polygon", 100));
 			polygons.remove(currPolygon);
+			break;
 		case 18:
 			break;
 		case 115:
@@ -171,7 +173,7 @@ public class MapEditor extends JPanel implements ActionListener, KeyListener, Mo
 			messages.add(new Message(mouse + "", 100));
 			break;
 		default:
-			System.out.println(m);
+			// System.out.println(m);
 			break;
 		}
 	}
@@ -192,24 +194,34 @@ public class MapEditor extends JPanel implements ActionListener, KeyListener, Mo
 	}
 
 	public void mousePressed(MouseEvent m) {
-		if (infoSection.contains(m.getPoint())) {
-			draggingInfoSection = true;
+		if (m.getButton() == 1) {
+			if (m.isControlDown()) {
+				polygons.get(currPolygon).removePoint(m.getX(), m.getY());
+			} else {
+				polygons.get(currPolygon).addPoint(m.getX(), m.getY());
+			}
+		} else if (m.getButton() == 3) {
+			dragger = true;
 			mouseDragPoint = m.getPoint();
-		} else if (m.getButton() == 1) {
-			polygons.get(currPolygon).addPoint(m.getX(), m.getY());
-		} else {
-			polygons.get(currPolygon).removePoint(m.getX(), m.getY());
 		}
 	}
 
 	public void mouseReleased(MouseEvent m) {
-		draggingInfoSection = false;
+		dragger = false;
 	}
 
 	public void mouseDragged(MouseEvent m) {
-		if (draggingInfoSection) {
-			infoSection.x += m.getX() - mouseDragPoint.getX();
-			infoSection.y += m.getY() - mouseDragPoint.getY();
+		if (dragger) {
+			if (infoSection.contains(m.getPoint())) {
+				infoSection.x += m.getX() - mouseDragPoint.getX();
+				infoSection.y += m.getY() - mouseDragPoint.getY();
+			}
+			for (Point x : polygons.get(currPolygon).points) {
+				if (x.distance(m.getPoint()) < 10) {
+					x.x += m.getX() - mouseDragPoint.getX();
+					x.y += m.getY() - mouseDragPoint.getY();
+				}
+			}
 		}
 		mouseDragPoint = m.getPoint();
 	}

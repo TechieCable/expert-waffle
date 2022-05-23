@@ -49,10 +49,10 @@ public class Map extends Picture {
 //		for (EntrySector x : entryPoints) {
 //			g.fillOval(x.x - Sector.width / 2, x.y - Sector.width / 2, Sector.width, Sector.width);
 //		}
-		for (DockPoly x : docks) {
-			g.drawPolygon(x);
-			g.fillOval(x.dockX, x.dockY, 10, 10);
-		}
+//		for (DockPoly x : docks) {
+//			g.drawPolygon(x);
+//			g.fillOval(x.dockX, x.dockY, 10, 10);
+//		}
 	}
 
 	public static int[] cors(String s) {

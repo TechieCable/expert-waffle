@@ -100,7 +100,6 @@ public class Boat extends RotatingPicture {
 
 		if (dockInfo.time(cargo)) {
 			angle -= Math.PI;
-			checkTime = 50;
 		}
 
 		g.setColor(Color.WHITE);
@@ -168,7 +167,7 @@ public class Boat extends RotatingPicture {
 	}
 
 	public void move() {
-		if (dockInfo.docked) {
+		if (dockInfo.docking || dockInfo.docked) {
 			return;
 		}
 		if (checkTime > 0) {
@@ -187,10 +186,15 @@ public class Boat extends RotatingPicture {
 			this.rotateTo(target.angle(ax(), ay()));
 		}
 
-		wake.add(new WakeBubble(ax(), ay(), 400 / speed));
+		addWake(400);
 
 		x += speed * Math.cos(angle);
 		y += speed * Math.sin(angle);
+	}
+
+	public void addWake(int time) {
+		wake.add(new WakeBubble(ax() - (height / 2 - 10) * Math.cos(angle), ay() - (height / 2 - 10) * Math.sin(angle),
+				time / speed));
 	}
 
 	public void rotateTo(double angle) {
@@ -255,6 +259,7 @@ class Cargo {
 		for (int i = 0; i < cargo.length; i++) {
 			if (cargo[i] == type) {
 				cargo[i] = 0;
+				Game.scr++;
 				return true;
 			}
 		}
@@ -286,21 +291,20 @@ class Cargo {
 class DockStamp {
 	int time;
 	int type;
-	boolean docked;
-	boolean done;
+	boolean docking, docked;
 
 	public DockStamp() {
 		time = 0;
 		type = 0;
+		docking = false;
 		docked = false;
-		done = false;
 	}
 
 	public void enter(DockPoly d) {
 		time = 0;
 		type = d.type;
+		docking = false;
 		docked = true;
-		done = false;
 	}
 
 	public boolean time(Cargo c) {
@@ -336,7 +340,7 @@ class WakeBubble extends Point {
 		this(x, y, 200);
 	}
 
-	public WakeBubble(double x, double y) {
-		this((int) x, (int) y);
+	public WakeBubble(double x, double y, int time) {
+		this((int) x, (int) y, time);
 	}
 }

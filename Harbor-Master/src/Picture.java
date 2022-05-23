@@ -202,7 +202,7 @@ class PictureScroller {
 			Picture last = pics.get(pics.size() - 1);
 			pics.add(new Picture(last.x + Driver.screenW * 3 / 4, last.y, fileName, scaleSize));
 		} else {
-			pics.add(new Picture(startX, startY, fileName, scaleSize));
+			pics.add(new Picture(startX + Driver.screenW * 3 / 4, startY, fileName, scaleSize));
 		}
 	}
 

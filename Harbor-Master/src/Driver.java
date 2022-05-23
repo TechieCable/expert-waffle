@@ -25,27 +25,27 @@ import javax.swing.Timer;
 @SuppressWarnings("serial")
 public class Driver extends JPanel
 		implements ActionListener, KeyListener, MouseListener, MouseMotionListener, MouseWheelListener {
-	public static int screenW = 1920, screenH = 1080;
-	public static Color woodBrown = new Color(98, 65, 51);
-	public static Color seaBlue = new Color(0, 145, 221);
-
-	Polygon titlePoly = new Polygon(
+	static int screenW = 1920, screenH = 1080;
+	static Color woodBrown = new Color(98, 65, 51);
+	static Color seaBlue = new Color(0, 145, 221);
+	static Polygon titlePoly = new Polygon(
 			new int[] { 838, 838, 828, 820, 816, 840, 919, 971, 985, 1017, 1039, 1119, 1224, 1244, 1234, 1238, 1226,
 					1249, 1240, 1227, 1224, 1206, 1198, 1157, 1143, 1132, 1073, 1052, 1040, 955, 934, 906, 888, 873 },
 			new int[] { 751, 792, 834, 872, 901, 898, 914, 911, 915, 928, 935, 935, 933, 926, 894, 865, 842, 783, 765,
 					777, 797, 803, 784, 775, 782, 781, 773, 781, 773, 765, 767, 755, 754, 743 },
 			34);
-
-	public static int maxBoats = 10;
-
+	static int maxBoats = 10;
 	static Label stat;
+	static Rectangle messageSection = new Rectangle(10, 10, 250, 25);
+	static ArrayList<Message> messages = new ArrayList<Message>();
+
 	Game game;
 	MultiPicture titles;
-	Picture gameOver;
-	Picture mapSelection;
-	Picture bubbles;
-	boolean paused;
-	boolean titleHover;
+	Picture gameOver, mapSelection, bubbles;
+	PictureScroller mapThumbs;
+	boolean paused, titleHover, hasRun;
+
+	int scrollSpeed = 20;
 
 	// screenNumber
 	// 0: title screen
@@ -53,15 +53,6 @@ public class Driver extends JPanel
 	// 2: game play
 	// 3: game over
 	int screenNumber = 0;
-
-	Rectangle messageSection = new Rectangle(10, 10, 250, 25);
-	ArrayList<Message> messages = new ArrayList<Message>();
-
-	PictureScroller mapThumbs;
-
-	boolean run = false;
-
-	int scrollSpeed = 20;
 
 	/**
 	 * primary graphics driver
@@ -72,11 +63,11 @@ public class Driver extends JPanel
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, screenW, screenH);
 		try {
-			if (!run) {
+			if (!hasRun) {
 				titles.paint(g, 0);
 				titles.paint(g, 1);
 				mapThumbs.load(g);
-				run = true;
+				hasRun = true;
 			}
 
 			if (game.gameOver) {
@@ -84,8 +75,6 @@ public class Driver extends JPanel
 			} else if (game.playing) {
 				screenNumber = 2;
 			}
-
-			// TODO: paint map thumbnails in map selection page
 
 			switch (screenNumber) {
 			case 0:
@@ -182,9 +171,11 @@ public class Driver extends JPanel
 		game = new Game();
 		paused = false;
 		titleHover = false;
+		titles.y = 0;
+		mapSelection = new Picture(0, 1080 * 2, "MapSelect.png", 1);
+		bubbles = new Picture(0, 1080, "Bubbles.png", 1);
 		screenNumber = 0;
-		mapSelection.y = 1080 * 2;
-		bubbles.y = 1080;
+		hasRun = false;
 	}
 
 	public static void display(String s) {
@@ -208,7 +199,6 @@ public class Driver extends JPanel
 		}
 
 		if (screenNumber == 1) {
-			System.out.println(m);
 			if (m.getKeyCode() == 37) { // left
 				mapThumbs.changeCurrent(-1);
 			} else if (m.getKeyCode() == 39) { // right

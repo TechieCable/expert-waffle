@@ -1,13 +1,17 @@
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class Game {
+	static int scr = 0;
+
 	ArrayList<Boat> boats;
 	CursorDrag cursorDrag;
 	Map m;
 	int boatGenTime;
 	int cargo;
+	int score;
 	boolean gameOver;
 	boolean playing;
 
@@ -19,6 +23,7 @@ public class Game {
 		boats = new ArrayList<Boat>();
 		cursorDrag = new CursorDrag();
 		m = new Map("map1.png", "map1.txt");
+		score = 0;
 		gameOver = false;
 		playing = false;
 	}
@@ -35,6 +40,12 @@ public class Game {
 
 		m.paint(g);
 
+		if (Game.scr > 0) {
+			score += Game.scr;
+			Game.scr = 0;
+			Driver.messages.add(new Message("Score is " + score, 200));
+		}
+
 		for (int i = 0; i < boats.size(); i++) {
 			Boat b = boats.get(i);
 
@@ -50,23 +61,26 @@ public class Game {
 				for (DockPoly x : m.docks) {
 					if (b.cargo.hasCargo(x.type) && x.isOver(b)) {
 						b.clearMoves();
+						b.dockInfo.docking = true;
 						if (x.snap(b)) {
 							b.ax(x.dockX);
 							b.ay(x.dockY);
 							b.angle = x.angle;
 							b.dockInfo.enter(x);
 						} else {
+							b.addWake(200);
 							// drift boat into place
-							if (x.dockX - b.ax() > 5) {
-								b.x += 1;
-							} else if (b.ax() - x.dockX > 5) {
-								b.x -= 1;
+							if (x.dockX - b.ax() > 1) {
+								b.x += b.speed / 2;
+							} else if (b.ax() - x.dockX > 1) {
+								b.x -= b.speed / 2;
 							}
-							if (x.dockY - b.ay() > 5) {
-								b.y += 1;
-							} else if (b.ay() - x.dockY > 5) {
-								b.y -= 1;
+							if (x.dockY - b.ay() > 1) {
+								b.y += b.speed / 2;
+							} else if (b.ay() - x.dockY > 1) {
+								b.y -= b.speed / 2;
 							}
+							b.rotateTo(x.angle);
 						}
 					}
 				}
@@ -121,6 +135,11 @@ public class Game {
 	}
 
 	public void boatDragHandler(MouseEvent e) {
+		// Point a = e.getPoint();
+//		for (DockPoly x : m.docks) {
+//			if (x))
+		// TODO: snap drag point when over a docking station
+//		}
 		if (cursorDrag.setCurr(e)) {
 			boats.get(cursorDrag.activeBoatID).addMove(new Position(cursorDrag.start));
 		}
