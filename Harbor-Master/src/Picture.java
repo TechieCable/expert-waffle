@@ -227,7 +227,7 @@ class PictureScroller {
 	public void paint(Graphics g) {
 		if (pics.size() == 0)
 			return;
-		int move = 20;
+		int move = 90;
 		if (pics.get(current).x > startX) {
 			move *= -1;
 		} else if (pics.get(current).x < startX) {

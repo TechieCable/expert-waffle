@@ -1,9 +1,11 @@
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class Game {
+	static int maxBoats = 10;
 	static int scr = 0;
 
 	ArrayList<Boat> boats;
@@ -29,9 +31,9 @@ public class Game {
 	}
 
 	public void paint(Graphics g) {
-		if (boatGenTime == 0 && boats.size() < Driver.maxBoats) {
+		if (boatGenTime == 0 && boats.size() < maxBoats) {
 			Sector entry = m.randomEntry();
-			Boat b = new Boat(entry.x, entry.y, Boat.randomBoatNum());
+			Boat b = new Boat(entry.x, entry.y, randomBoatNum());
 			boats.add(b);
 			boatGenTime = 500;
 		}
@@ -58,10 +60,12 @@ public class Game {
 
 			// dock checks
 			if (b.cargo.hasCargo() && !b.dockInfo.docked) {
+				boolean undock = true; // undock unless the boat is over a dock
 				for (DockPoly x : m.docks) {
 					if (b.cargo.hasCargo(x.type) && x.isOver(b)) {
 						b.clearMoves();
 						b.dockInfo.docking = true;
+						undock = false; // don't undock
 						if (x.snap(b)) {
 							b.ax(x.dockX);
 							b.ay(x.dockY);
@@ -83,6 +87,9 @@ public class Game {
 							b.rotateTo(x.angle);
 						}
 					}
+				}
+				if (b.dockInfo.docking && undock) {
+					b.dockInfo.docking = false;
 				}
 			}
 
@@ -106,6 +113,13 @@ public class Game {
 				}
 			}
 		}
+
+		g.setFont(Driver.defaultFont.deriveFont((float) 30));
+		g.setColor(Color.BLACK);
+		g.fillRect(Driver.screenW - 65, 5, 60, 30);
+		g.setColor(Color.WHITE);
+		g.drawString("000".substring((score + "").length()) + score, Driver.screenW - 60, 30);
+		g.setFont(Driver.defaultFont);
 	}
 
 	public Position redirectionPos(Boat b) {
@@ -143,6 +157,14 @@ public class Game {
 		if (cursorDrag.setCurr(e)) {
 			boats.get(cursorDrag.activeBoatID).addMove(new Position(cursorDrag.start));
 		}
+	}
+
+	public static int randomBoatNum() {
+		int res = 0;
+		while (!(res == 1 || res == 2 || res == 4)) {
+			res = (int) (Math.random() * 4) + 1;
+		}
+		return res;
 	}
 
 }

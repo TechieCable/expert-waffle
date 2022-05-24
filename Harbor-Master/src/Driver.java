@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Label;
 import java.awt.Point;
@@ -34,10 +35,10 @@ public class Driver extends JPanel
 			new int[] { 751, 792, 834, 872, 901, 898, 914, 911, 915, 928, 935, 935, 933, 926, 894, 865, 842, 783, 765,
 					777, 797, 803, 784, 775, 782, 781, 773, 781, 773, 765, 767, 755, 754, 743 },
 			34);
-	static int maxBoats = 10;
 	static Label stat;
 	static Rectangle messageSection = new Rectangle(10, 10, 250, 25);
 	static ArrayList<Message> messages = new ArrayList<Message>();
+	static Font defaultFont = new Font("Dialog", Font.PLAIN, 12);
 
 	Game game;
 	MultiPicture titles;
@@ -154,6 +155,7 @@ public class Driver extends JPanel
 		mapThumbs = new PictureScroller(520, 360, 0.4);
 		mapThumbs.add("map1.png");
 		mapThumbs.add("map2.png");
+		mapThumbs.add("map3.png");
 
 		generate();
 

@@ -23,25 +23,35 @@ import javax.swing.Timer;
 public class MapEditor extends JPanel implements ActionListener, KeyListener, MouseListener, MouseMotionListener {
 	public static int screenW = 1920, screenH = 1080;
 
-	Map m = new Map(1);
-	ArrayList<PointedPolygon> polygons = new ArrayList<PointedPolygon>();
-	ArrayList<Sector> entrySectors = new ArrayList<Sector>();
-	ArrayList<Point> snapPoint = new ArrayList<Point>();
+	Map m = new Map(2);
 	Rectangle infoSection = new Rectangle(10, 10, 250, 25);
 	boolean dragger = false;
 	Point mouseDragPoint = new Point();
 	Point mouse = new Point();
 
-	int currPolygon = 0;
+	int currObject = 0;
+	int currList = 0;
+
+	ArrayList[] lists;
+
+//<Sector> entryPoints
+//<EPolygon> land
+//<DockPoly> docks
+//<EPolygon> water
 
 	ArrayList<Message> messages = new ArrayList<Message>();
 
 	public void paint(Graphics g) {
 		infoSection = new Rectangle(infoSection.x, infoSection.y, 230, 20 * messages.size());
-		if (currPolygon >= polygons.size()) {
-			currPolygon = 0;
-		} else if (currPolygon < 0) {
-			currPolygon = polygons.size() - 1;
+		if (currList >= lists.length) {
+			currList = 0;
+		} else if (currList < 0) {
+			currList = lists.length - 1;
+		}
+		if (currObject >= lists[currList].size()) {
+			currObject = 0;
+		} else if (currObject < 0) {
+			currObject = lists[currList].size() - 1;
 		}
 
 		g.setColor(Color.BLACK);
@@ -51,16 +61,44 @@ public class MapEditor extends JPanel implements ActionListener, KeyListener, Mo
 
 		m.paint(g);
 
-		for (int i = 0; i < polygons.size(); i++) {
-			g.setColor(i == currPolygon ? Color.GREEN : Color.WHITE);
-			polygons.get(i).paint(g);
+		/* entry points ID 0 */
+		for (int i = 0; i < lists[0].size(); i++) {
+			g.setColor((currList == 0 && currObject == i) ? Color.GREEN : Color.WHITE);
+			Sector x = (Sector) lists[0].get(i);
+			g.drawOval(x.x - 200, x.y - 200, 400, 400);
 		}
-		g.setColor(Color.WHITE);
-		for (Sector x : entrySectors) {
-			g.drawOval(x.x - 400 / 2, x.y - 400 / 2, 400, 400);
+
+		/* land ID 1 */
+		for (int i = 0; i < lists[1].size(); i++) {
+			g.setColor((currList == 1 && currObject == i) ? Color.GREEN : Color.WHITE);
+			PointedPolygon x = (PointedPolygon) lists[1].get(i);
+			g.drawPolygon(x.getPolygon());
+			for (int j = 0; j < x.points.size(); j++) {
+				g.drawRect(x.points.get(j).x - 5, x.points.get(j).y - 5, 10, 10);
+			}
 		}
-		for (Point x : snapPoint) {
-			g.drawOval(x.x - 5, x.y - 5, 10, 10);
+
+		/* docks ID 2 */
+		for (int i = 0; i < lists[2].size(); i++) {
+			g.setColor((currList == 2 && currObject == i) ? Color.GREEN : Color.WHITE);
+			PointedDockPoly x = (PointedDockPoly) lists[2].get(i);
+			g.drawPolygon(x.getPolygon());
+			g.drawOval(x.dockX - 5, x.dockY - 5, 10, 10);
+			g.drawLine(x.dockX, x.dockY, (int) (x.dockX + Math.cos(x.angle) * 20),
+					(int) (x.dockY + Math.sin(x.angle) * 20));
+			for (int j = 0; j < x.points.size(); j++) {
+				g.drawRect(x.points.get(j).x - 5, x.points.get(j).y - 5, 10, 10);
+			}
+		}
+
+		/* water ID 3 */
+		for (int i = 0; i < lists[3].size(); i++) {
+			g.setColor((currList == 2 && currObject == i) ? Color.GREEN : Color.WHITE);
+			PointedPolygon x = (PointedPolygon) lists[3].get(i);
+			g.drawPolygon(x.getPolygon());
+			for (int j = 0; j < x.points.size(); j++) {
+				g.drawRect(x.points.get(j).x - 5, x.points.get(j).y - 5, 10, 10);
+			}
 		}
 
 		g.setColor(Color.BLACK);
@@ -97,24 +135,26 @@ public class MapEditor extends JPanel implements ActionListener, KeyListener, Mo
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		frame.setUndecorated(true);
 
-		frame.setVisible(true);
-
-		while (m.land.size() > 0) {
-			Polygon x = m.land.remove(0);
-			polygons.add(new PointedPolygon(x.xpoints, x.ypoints, x.npoints));
-		}
-		while (m.docks.size() > 0) {
-			DockPoly x = m.docks.remove(0);
-			polygons.add(new PointedPolygon(x.xpoints, x.ypoints, x.npoints));
-			snapPoint.add(new Point(x.dockX, x.dockY));
-		}
-		while (m.water.size() > 0) {
-			Polygon x = m.water.remove(0);
-			polygons.add(new PointedPolygon(x.xpoints, x.ypoints, x.npoints));
-		}
+		ArrayList<Sector> list1 = new ArrayList<Sector>();
 		while (m.entryPoints.size() > 0) {
-			entrySectors.add(m.entryPoints.remove(0));
+			list1.add(m.entryPoints.remove(0));
 		}
+		ArrayList<PointedPolygon> list2 = new ArrayList<PointedPolygon>();
+		while (m.land.size() > 0) {
+			list2.add(new PointedPolygon(m.land.remove(0)));
+		}
+		ArrayList<PointedDockPoly> list3 = new ArrayList<PointedDockPoly>();
+		while (m.docks.size() > 0) {
+			list3.add(new PointedDockPoly(m.docks.remove(0)));
+		}
+		ArrayList<PointedPolygon> list4 = new ArrayList<PointedPolygon>();
+		while (m.water.size() > 0) {
+			list4.add(new PointedPolygon(m.water.remove(0)));
+		}
+
+		lists = new ArrayList[] { list1, list2, list3, list4 };
+
+		frame.setVisible(true);
 
 		messages.add(new Message("arrow keys change current", 250));
 		messages.add(new Message("polygon selection", 250));
@@ -135,35 +175,39 @@ public class MapEditor extends JPanel implements ActionListener, KeyListener, Mo
 
 	public void keyPressed(KeyEvent m) {
 		switch (m.getKeyCode()) {
+		case 37: // left
+			currList--;
+			break;
+		case 39: // right
+			currList++;
+			break;
 		case 38: // up
-			currPolygon++;
+			currObject++;
 			break;
 		case 40: // down
-			currPolygon--;
+			currObject--;
 			break;
 		case 32: // space
 			messages.add(new Message("Printing items...", 100));
-			System.out.println("Polygons:");
-			for (PointedPolygon x : polygons) {
-				System.out.println(x);
-			}
-			System.out.println("Entry sectors:");
-			for (Sector x : entrySectors) {
-				System.out.println(x);
-			}
-			System.out.println("Snap points:");
-			for (Point x : snapPoint) {
-				System.out.println(x);
-			}
+			// TODO: add print statement
 			break;
 		case 78: // n
 			messages.add(new Message("Added a new polygon", 100));
 			messages.add(new Message("Access it with the arrow keys", 200));
-			polygons.add(new PointedPolygon());
+			if (currList == 0) { // entryPoints
+				lists[0].add(new Sector(MapEditor.screenW / 2, MapEditor.screenH / 2));
+			} else if (currList == 1) { // land
+				lists[1].add(new PointedPolygon());
+			} else if (currList == 2) { // docks
+				lists[2].add(new PointedDockPoly());
+			} else if (currList == 3) { // water
+				lists[3].add(new PointedPolygon());
+			}
+//			polygons.add(new PointedPolygon());
 			break;
 		case 68: // d
 			messages.add(new Message("Removed a polygon", 100));
-			polygons.remove(currPolygon);
+//			polygons.remove(currObject);
 			break;
 		case 18:
 			break;
@@ -173,7 +217,7 @@ public class MapEditor extends JPanel implements ActionListener, KeyListener, Mo
 			messages.add(new Message(mouse + "", 100));
 			break;
 		default:
-			// System.out.println(m);
+			System.out.println(m);
 			break;
 		}
 	}
@@ -196,9 +240,18 @@ public class MapEditor extends JPanel implements ActionListener, KeyListener, Mo
 	public void mousePressed(MouseEvent m) {
 		if (m.getButton() == 1) {
 			if (m.isControlDown()) {
-				polygons.get(currPolygon).removePoint(m.getX(), m.getY());
+				if (currList == 0) { // entryPoints
+
+				} else if (currList == 1) { // land
+
+				} else if (currList == 2) { // docks
+
+				} else if (currList == 3) { // water
+
+				}
+//				polygons.get(currObject).removePoint(m.getX(), m.getY());
 			} else {
-				polygons.get(currPolygon).addPoint(m.getX(), m.getY());
+//				polygons.get(currObject).addPoint(m.getX(), m.getY());
 			}
 		} else if (m.getButton() == 3) {
 			dragger = true;
@@ -216,12 +269,12 @@ public class MapEditor extends JPanel implements ActionListener, KeyListener, Mo
 				infoSection.x += m.getX() - mouseDragPoint.getX();
 				infoSection.y += m.getY() - mouseDragPoint.getY();
 			}
-			for (Point x : polygons.get(currPolygon).points) {
-				if (x.distance(m.getPoint()) < 10) {
-					x.x += m.getX() - mouseDragPoint.getX();
-					x.y += m.getY() - mouseDragPoint.getY();
-				}
-			}
+//			for (Point x : polygons.get(currObject).points) {
+//				if (x.distance(m.getPoint()) < 10) {
+//					x.x += m.getX() - mouseDragPoint.getX();
+//					x.y += m.getY() - mouseDragPoint.getY();
+//				}
+//			}
 		}
 		mouseDragPoint = m.getPoint();
 	}
@@ -242,6 +295,12 @@ class PointedPolygon {
 	}
 
 	public PointedPolygon() {
+	}
+
+	public PointedPolygon(Polygon x) {
+		for (int i = 0; i < x.npoints; i++) {
+			points.add(new Point(x.xpoints[i], x.ypoints[i]));
+		}
 	}
 
 	public void addPoint(int x, int y) {
@@ -275,5 +334,23 @@ class PointedPolygon {
 	public String toString() {
 		return Arrays.toString(getPolygon().xpoints).replace(" ", "") + ":"
 				+ Arrays.toString(getPolygon().ypoints).replace(" ", "");
+	}
+}
+
+class PointedDockPoly extends PointedPolygon {
+	int dockX, dockY;
+	double angle;
+	int type;
+
+	public PointedDockPoly() {
+		super();
+	}
+
+	public PointedDockPoly(DockPoly x) {
+		super(x);
+		dockX = x.dockX;
+		dockY = x.dockY;
+		angle = x.angle;
+		type = x.type;
 	}
 }

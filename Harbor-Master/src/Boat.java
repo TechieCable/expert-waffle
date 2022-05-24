@@ -151,7 +151,10 @@ public class Boat extends RotatingPicture {
 	 */
 	public void addMove(Position p) {
 		moves.add(p);
-		dockInfo.docked = false;
+		if (dockInfo.docked) {
+			dockInfo.docked = false;
+			checkTime = 200;
+		}
 	}
 
 	public void setFocus(Position p) {
@@ -220,15 +223,6 @@ public class Boat extends RotatingPicture {
 		}
 		return min;
 	}
-
-	public static int randomBoatNum() {
-		int res = 0;
-		while (!(res == 1 || res == 2 || res == 4)) {
-			res = (int) (Math.random() * 4) + 1;
-		}
-		return res;
-	}
-
 }
 
 class Cargo {
