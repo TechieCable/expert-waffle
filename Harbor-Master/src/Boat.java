@@ -251,7 +251,7 @@ class Cargo {
 	 */
 	public boolean clearOne(int type) {
 		for (int i = 0; i < cargo.length; i++) {
-			if (cargo[i] == type) {
+			if (cargo[i] == type || (type == 10 && cargo[i] != 0)) {
 				cargo[i] = 0;
 				Game.scr++;
 				return true;
@@ -261,6 +261,9 @@ class Cargo {
 	}
 
 	public boolean hasCargo(int type) {
+		if (type == 10) {
+			return hasCargo();
+		}
 		for (int i : cargo) {
 			if (type == i) {
 				return true;

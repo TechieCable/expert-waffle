@@ -63,52 +63,49 @@ public class Driver extends JPanel
 
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, screenW, screenH);
-		try {
-			if (!hasRun) {
+
+		if (!hasRun) {
+			titles.paint(g, 0);
+			titles.paint(g, 1);
+			mapThumbs.load(g);
+			hasRun = true;
+		}
+
+		if (game.gameOver) {
+			screenNumber = 3;
+		} else if (game.playing) {
+			screenNumber = 2;
+		}
+
+		switch (screenNumber) {
+		case 0:
+			if (!titleHover)
 				titles.paint(g, 0);
+			else
 				titles.paint(g, 1);
-				mapThumbs.load(g);
-				hasRun = true;
+			break;
+		case 1:
+			// map selection
+			if (mapSelection.y > 0) {
+				titles.y -= scrollSpeed;
+				bubbles.y -= scrollSpeed;
+				mapSelection.y -= scrollSpeed;
+				titles.paint(g, 0);
+				bubbles.paint(g);
 			}
-
-			if (game.gameOver) {
-				screenNumber = 3;
-			} else if (game.playing) {
-				screenNumber = 2;
+			mapSelection.paint(g);
+			if (mapSelection.y == 0) {
+				mapThumbs.paint(g);
 			}
-
-			switch (screenNumber) {
-			case 0:
-				if (!titleHover)
-					titles.paint(g, 0);
-				else
-					titles.paint(g, 1);
-				break;
-			case 1:
-				// map selection
-				if (mapSelection.y > 0) {
-					titles.y -= scrollSpeed;
-					bubbles.y -= scrollSpeed;
-					mapSelection.y -= scrollSpeed;
-					titles.paint(g, 0);
-					bubbles.paint(g);
-				}
-				mapSelection.paint(g);
-				if (mapSelection.y == 0) {
-					mapThumbs.paint(g);
-				}
-				break;
-			case 2:
-				game.paint(g);
-				break;
-			case 3:
-				// game over
-				gameOver.paint(g);
-			default:
-				break;
-			}
-		} catch (Exception e) {
-			messages.add(new Message(e.getMessage(), 200));
+			break;
+		case 2:
+			game.paint(g);
+			break;
+		case 3:
+			// game over
+			gameOver.paint(g);
+		default:
+			break;
 		}
 
 		g.setColor(Color.BLACK);
