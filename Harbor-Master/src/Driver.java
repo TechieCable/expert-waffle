@@ -16,6 +16,8 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
@@ -150,9 +152,17 @@ public class Driver extends JPanel
 		bubbles = new Picture(0, 1080, "Bubbles.png", 1);
 
 		mapThumbs = new PictureScroller(520, 360, 0.4);
-		mapThumbs.add("map1.png");
-		mapThumbs.add("map2.png");
-		mapThumbs.add("map3.png");
+
+		try {
+			Files.walk(Paths.get("src/imgs/")).forEach(path -> {
+				File f = path.toFile();
+				if (f.isFile() && f.getName().indexOf("map") > -1) {
+					mapThumbs.add(f.getName());
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		generate();
 

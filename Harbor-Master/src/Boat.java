@@ -95,8 +95,8 @@ public class Boat extends RotatingPicture {
 	}
 
 	public void paint(Graphics g) {
-		speed = (int) ((264 * scaleSize) / height);
-		da = Math.PI / 72 * speed;
+		speed = (int) ((364 * scaleSize) / height); // 264
+		da = Math.PI / 72 * speed / (364 / 264);
 
 		if (dockInfo.time(cargo)) {
 			angle -= Math.PI;

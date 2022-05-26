@@ -1,5 +1,4 @@
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -31,11 +30,11 @@ public class Game {
 	}
 
 	public void paint(Graphics g) {
-		if (boatGenTime == 0 && boats.size() < maxBoats) {
+		if (boatGenTime == 0 && boats.size() < maxBoats * (score + 10) / 10) {
 			Sector entry = m.randomEntry();
 			Boat b = new Boat(entry.x, entry.y, randomBoatNum());
 			boats.add(b);
-			boatGenTime = 500;
+			boatGenTime = (int) (500 * Math.pow(Math.E, -(score / 500 + 1)) + 317);
 		}
 		if (boatGenTime > 0)
 			boatGenTime--;
@@ -45,7 +44,6 @@ public class Game {
 		if (Game.scr > 0) {
 			score += Game.scr;
 			Game.scr = 0;
-			Driver.messages.add(new Message("Score is " + score, 200));
 		}
 
 		for (int i = 0; i < boats.size(); i++) {
@@ -149,11 +147,6 @@ public class Game {
 	}
 
 	public void boatDragHandler(MouseEvent e) {
-		// Point a = e.getPoint();
-//		for (DockPoly x : m.docks) {
-//			if (x))
-		// TODO: snap drag point when over a docking station
-//		}
 		if (cursorDrag.setCurr(e)) {
 			boats.get(cursorDrag.activeBoatID).addMove(new Position(cursorDrag.start));
 		}
