@@ -43,10 +43,12 @@ public class Driver extends JPanel
 	static Font defaultFont = new Font("Dialog", Font.PLAIN, 12);
 
 	Game game;
+	Music titleMusic = new Music("Harbor_Master_Music.wav", false);
+	Music wellerMan = new Music("Wellerman_HM.wav", true);
 	MultiPicture titles;
 	Picture gameOver, mapSelection, bubbles;
 	PictureScroller mapThumbs;
-	boolean paused, titleHover, hasRun;
+	boolean titleHover, hasRun;
 
 	int scrollSpeed = 20;
 
@@ -67,9 +69,12 @@ public class Driver extends JPanel
 		g.fillRect(0, 0, screenW, screenH);
 
 		if (!hasRun) {
+			titleMusic.quit();
+			wellerMan.quit();
 			titles.paint(g, 0);
 			titles.paint(g, 1);
 			mapThumbs.load(g);
+			titleMusic.play();
 			hasRun = true;
 		}
 
@@ -101,10 +106,11 @@ public class Driver extends JPanel
 			}
 			break;
 		case 2:
+			titleMusic.quit();
 			game.paint(g);
 			break;
 		case 3:
-			// game over
+			wellerMan.quit();
 			gameOver.paint(g);
 		default:
 			break;
@@ -178,7 +184,6 @@ public class Driver extends JPanel
 
 	public void generate() {
 		game = new Game();
-		paused = false;
 		titleHover = false;
 		titles.y = 0;
 		mapSelection = new Picture(0, 1080 * 2, "MapSelect.png", 1);
@@ -228,17 +233,16 @@ public class Driver extends JPanel
 		if (screenNumber == 0 && titlePoly.contains(m.getPoint())) {
 			screenNumber = 1;
 		} else if (screenNumber == 1 && mapThumbs.getCurrent().toRectangle().contains(m.getPoint())) {
+			wellerMan.play();
 			game.m = new Map(mapThumbs.current + 1);
 			screenNumber = 2;
 		}
 	}
 
 	public void mouseEntered(MouseEvent m) {
-		paused = false;
 	}
 
 	public void mouseExited(MouseEvent m) {
-		paused = true;
 	}
 
 	public void mousePressed(MouseEvent m) {

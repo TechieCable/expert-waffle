@@ -148,7 +148,10 @@ public class Game {
 
 	public void boatDragHandler(MouseEvent e) {
 		if (cursorDrag.setCurr(e)) {
-			boats.get(cursorDrag.activeBoatID).addMove(new Position(cursorDrag.start));
+			try {
+				boats.get(cursorDrag.activeBoatID).addMove(new Position(cursorDrag.start));
+			} catch (Exception e2) {
+			}
 		}
 	}
 

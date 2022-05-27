@@ -133,6 +133,8 @@ public class Boat extends RotatingPicture {
 			} else if (cargo.get()[i] == 2) {
 				g2.setColor(purple);
 			}
+			g2.translate(-speed * Math.cos(angle) * (dockInfo.docked ? 0 : 1),
+					-speed * Math.sin(angle) * (dockInfo.docked ? 0 : 1));
 			if (boatNum == 4) {
 				g2.fillRect(ax() - 15, ay() + 6 - (17 * i), 30, 15);
 			} else if (boatNum == 2) {
@@ -140,6 +142,8 @@ public class Boat extends RotatingPicture {
 			} else if (boatNum == 1) {
 				g2.fillRect(ax() - 13, ay() - 25, 26, 22);
 			}
+			g2.translate(speed * Math.cos(angle) * (dockInfo.docked ? 0 : 1),
+					speed * Math.sin(angle) * (dockInfo.docked ? 0 : 1));
 		}
 		g2.rotate(-(angle - Math.PI / 2), x + width / 2, y + height / 2);
 	}
