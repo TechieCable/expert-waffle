@@ -41,3 +41,11 @@
 #### MapEditor
 - **unstable**, but can be used to add/edit map definitions
 - a map is defined with an image (in `src/imgs/`) and a txt file (in `src/map-sectors`)
+
+## Gameplay
+
+- press "play" on the title screen
+- select a map on the map selection screen, or use the scroll wheel or arrow keys to rotate through maps
+- drag boats to dock when they enter the map
+- the score is displayed in the upper right corner during gameplay
+- to reset the game at any point, hit "r"
