@@ -44,8 +44,8 @@
 
 ## Gameplay
 
-- press "play" on the title screen
-- select a map on the map selection screen, or use the scroll wheel or arrow keys to rotate through maps
+- press `play` on the title screen
+- select a map on the map selection screen, or use the scroll wheel or arrow keys `⬅️` `➡️` to rotate through maps
 - drag boats to dock when they enter the map
 - the score is displayed in the upper right corner during gameplay
-- to reset the game at any point, hit "r"
+- to reset the game at any point, hit `r`
