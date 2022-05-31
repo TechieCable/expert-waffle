@@ -256,7 +256,7 @@ public class MapEditor extends JPanel implements ActionListener, KeyListener, Mo
 				System.out.println("d "
 						+ (Arrays.toString(a.getPolygon().xpoints) + ":" + Arrays.toString(a.getPolygon().ypoints))
 								.replaceAll(" ", "")
-						+ " " + a.dockX + " " + a.dockY + " " + (a.angle * 180 / Math.PI) + " " + a.type);
+						+ " " + a.dockX + " " + a.dockY + " " + (int) (a.angle * 180 / Math.PI) + " " + a.type);
 			}
 			for (Object x : lists[3]) { // water
 				PointedPolygon a = (PointedPolygon) x;

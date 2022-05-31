@@ -69,12 +69,9 @@ public class Driver extends JPanel
 		g.fillRect(0, 0, screenW, screenH);
 
 		if (!hasRun) {
-			titleMusic.quit();
-			wellerMan.quit();
 			titles.paint(g, 0);
 			titles.paint(g, 1);
 			mapThumbs.load(g);
-			titleMusic.play();
 			hasRun = true;
 		}
 
@@ -183,6 +180,8 @@ public class Driver extends JPanel
 	}
 
 	public void generate() {
+		titleMusic.quit();
+		wellerMan.quit();
 		game = new Game();
 		titleHover = false;
 		titles.y = 0;
@@ -190,6 +189,8 @@ public class Driver extends JPanel
 		bubbles = new Picture(0, 1080, "Bubbles.png", 1);
 		screenNumber = 0;
 		hasRun = false;
+
+		titleMusic.play();
 	}
 
 	public static void display(String s) {
