@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.HeadlessException;
 import java.awt.Label;
 import java.awt.Point;
 import java.awt.Polygon;
@@ -16,6 +17,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -28,19 +30,17 @@ import javax.swing.Timer;
 @SuppressWarnings("serial")
 public class Driver extends JPanel
 		implements ActionListener, KeyListener, MouseListener, MouseMotionListener, MouseWheelListener {
+	static Font defaultFont = new Font("Dialog", Font.PLAIN, 12);
 	static int screenW = 1920, screenH = 1080;
 	static Color woodBrown = new Color(98, 65, 51);
-	static Color seaBlue = new Color(0, 145, 221);
 	static Polygon titlePoly = new Polygon(
 			new int[] { 838, 838, 828, 820, 816, 840, 919, 971, 985, 1017, 1039, 1119, 1224, 1244, 1234, 1238, 1226,
 					1249, 1240, 1227, 1224, 1206, 1198, 1157, 1143, 1132, 1073, 1052, 1040, 955, 934, 906, 888, 873 },
 			new int[] { 751, 792, 834, 872, 901, 898, 914, 911, 915, 928, 935, 935, 933, 926, 894, 865, 842, 783, 765,
 					777, 797, 803, 784, 775, 782, 781, 773, 781, 773, 765, 767, 755, 754, 743 },
 			34);
-	static Label stat;
 	static Rectangle messageSection = new Rectangle(10, 10, 250, 25);
 	static ArrayList<Message> messages = new ArrayList<Message>();
-	static Font defaultFont = new Font("Dialog", Font.PLAIN, 12);
 
 	Game game;
 	Music titleMusic = new Music("Harbor_Master_Music.wav", false);
@@ -141,22 +141,17 @@ public class Driver extends JPanel
 		frame.addMouseListener(this);
 		frame.addMouseMotionListener(this);
 		frame.addMouseWheelListener(this);
-		stat = new Label();
-//		frame.getContentPane().add(BorderLayout.NORTH, stat);
-		stat.setSize(frame.getSize().width, stat.getSize().height);
 		t.start();
 
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		frame.setUndecorated(true);
 
-		titles = new MultiPicture(0, 0, new String[] { "Title.png", "Title_Highlighted.png" }, 1);
-		gameOver = new Picture(0, 0, "GameOver_Screen.png", 1);
-		mapSelection = new Picture(0, 1080 * 2, "MapSelect.png", 1);
-		bubbles = new Picture(0, 1080, "Bubbles.png", 1);
-
-		mapThumbs = new PictureScroller(520, 360, 0.4);
-
 		try {
+			// change cursor
+			frame.getContentPane().setCursor(Toolkit.getDefaultToolkit()
+					.createCustomCursor(ImageIO.read(new File("Cursor.png")), new Point(16, 16), "blank cursor"));
+
+			// load map files
 			Files.walk(Paths.get("src/imgs/")).forEach(path -> {
 				File f = path.toFile();
 				if (f.isFile() && f.getName().indexOf("map") > -1) {
@@ -166,17 +161,17 @@ public class Driver extends JPanel
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		titles = new MultiPicture(0, 0, new String[] { "Title.png", "Title_Highlighted.png" }, 1);
+		gameOver = new Picture(0, 0, "GameOver_Screen.png", 1);
+		mapSelection = new Picture(0, 1080 * 2, "MapSelect.png", 1);
+		bubbles = new Picture(0, 1080, "Bubbles.png", 1);
+
+		mapThumbs = new PictureScroller(520, 360, 0.4);
 
 		generate();
 
 		frame.setVisible(true);
-
-		try {
-			frame.getContentPane().setCursor(Toolkit.getDefaultToolkit()
-					.createCustomCursor(ImageIO.read(new File("Cursor.png")), new Point(16, 16), "blank cursor"));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	public void generate() {
@@ -193,15 +188,6 @@ public class Driver extends JPanel
 		titleMusic.play();
 	}
 
-	public static void display(String s) {
-		System.out.println(s);
-		stat.setText(s);
-	}
-
-	public static void setStatus(String s) {
-		stat.setText(s);
-	}
-
 	Timer t = new Timer(16, this);
 
 	public void actionPerformed(ActionEvent m) {
@@ -209,7 +195,7 @@ public class Driver extends JPanel
 	}
 
 	public void keyPressed(KeyEvent m) {
-		if (m.getKeyCode() == 82) {
+		if (m.getKeyCode() == 82) { // r
 			generate();
 		}
 
