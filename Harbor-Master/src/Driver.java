@@ -1,8 +1,6 @@
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.HeadlessException;
-import java.awt.Label;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
@@ -17,7 +15,6 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -68,6 +65,7 @@ public class Driver extends JPanel
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, screenW, screenH);
 
+		// load graphics on first run
 		if (!hasRun) {
 			titles.paint(g, 0);
 			titles.paint(g, 1);
@@ -81,8 +79,10 @@ public class Driver extends JPanel
 			screenNumber = 2;
 		}
 
+		// handle different screens
 		switch (screenNumber) {
 		case 0:
+			// title
 			if (!titleHover)
 				titles.paint(g, 0);
 			else
@@ -103,16 +103,19 @@ public class Driver extends JPanel
 			}
 			break;
 		case 2:
-			titleMusic.quit();
+			// game
 			game.paint(g);
 			break;
 		case 3:
+			// game over
 			wellerMan.quit();
 			gameOver.paint(g);
+			break;
 		default:
 			break;
 		}
 
+		// paint messages on screen
 		g.setColor(Color.BLACK);
 		g.fillRect(messageSection.x, messageSection.y, messageSection.width, messageSection.height);
 		for (int i = 0; i < messages.size(); i++) {
@@ -146,6 +149,8 @@ public class Driver extends JPanel
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		frame.setUndecorated(true);
 
+		mapThumbs = new PictureScroller(520, 360, 0.4);
+
 		try {
 			// change cursor
 			frame.getContentPane().setCursor(Toolkit.getDefaultToolkit()
@@ -161,13 +166,9 @@ public class Driver extends JPanel
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		titles = new MultiPicture(0, 0, new String[] { "Title.png", "Title_Highlighted.png" }, 1);
 		gameOver = new Picture(0, 0, "GameOver_Screen.png", 1);
-		mapSelection = new Picture(0, 1080 * 2, "MapSelect.png", 1);
-		bubbles = new Picture(0, 1080, "Bubbles.png", 1);
-
-		mapThumbs = new PictureScroller(520, 360, 0.4);
 
 		generate();
 
@@ -184,6 +185,7 @@ public class Driver extends JPanel
 		bubbles = new Picture(0, 1080, "Bubbles.png", 1);
 		screenNumber = 0;
 		hasRun = false;
+		mapThumbs.reset();
 
 		titleMusic.play();
 	}
@@ -220,6 +222,8 @@ public class Driver extends JPanel
 		if (screenNumber == 0 && titlePoly.contains(m.getPoint())) {
 			screenNumber = 1;
 		} else if (screenNumber == 1 && mapThumbs.getCurrent().toRectangle().contains(m.getPoint())) {
+			// start the game
+			titleMusic.quit();
 			wellerMan.play();
 			game.m = new Map(mapThumbs.current + 1);
 			screenNumber = 2;

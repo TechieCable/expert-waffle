@@ -22,11 +22,21 @@ public class Boat extends RotatingPicture {
 	boolean remove;
 	ArrayList<WakeBubble> wake = new ArrayList<WakeBubble>();
 
+	/**
+	 * default constructor
+	 */
 	public Boat() {
 		this((int) (Math.random() * (Driver.screenW - 20 - 20 + 1)) + 20,
 				(int) (Math.random() * (Driver.screenH - 20 - 20 + 1)) + 20, 1);
 	}
 
+	/**
+	 * constructor with position and boat selection
+	 * 
+	 * @param x
+	 * @param y
+	 * @param boatNum
+	 */
 	public Boat(int x, int y, int boatNum) {
 		super(x, y, "boat" + boatNum + "-0.png", 1.4);
 		speed = 4;
@@ -86,6 +96,11 @@ public class Boat extends RotatingPicture {
 		return getRect().contains(x, y);
 	}
 
+	/**
+	 * returns a rectangle representation of the boat
+	 * 
+	 * @return Rectangle
+	 */
 	public Rectangle getRect() {
 		double tempAngle = Math.PI * 2 - angle;
 		tempAngle %= Math.PI * 2;
@@ -94,6 +109,12 @@ public class Boat extends RotatingPicture {
 		return new Rectangle(ax() - maxWidth / 2, ay() - maxHeight / 2, maxWidth, maxHeight);
 	}
 
+	/**
+	 * calculate speed, manage dock, paint move lines, draw wake, draw the boat,
+	 * draw cargo
+	 * 
+	 * @param Graphics
+	 */
 	public void paint(Graphics g) {
 		speed = (int) ((364 * scaleSize) / height); // 264
 		da = Math.PI / 72 * speed / (364 / 264);
@@ -151,7 +172,7 @@ public class Boat extends RotatingPicture {
 	/**
 	 * add a move to the list
 	 * 
-	 * @param p
+	 * @param Position
 	 */
 	public void addMove(Position p) {
 		moves.add(p);
@@ -161,6 +182,11 @@ public class Boat extends RotatingPicture {
 		}
 	}
 
+	/**
+	 * sets the boat's focus move
+	 * 
+	 * @param Position
+	 */
 	public void setFocus(Position p) {
 		clearMoves();
 		target = p;
@@ -168,11 +194,17 @@ public class Boat extends RotatingPicture {
 		addMove(p);
 	}
 
+	/**
+	 * clear moves from the list
+	 */
 	public void clearMoves() {
 		moves.clear();
 		target = new Position(ax(), ay());
 	}
 
+	/**
+	 * find next move, rotate toward correct angle, and add wake to boat
+	 */
 	public void move() {
 		if (dockInfo.docking || dockInfo.docked) {
 			return;
@@ -199,11 +231,21 @@ public class Boat extends RotatingPicture {
 		y += speed * Math.sin(angle);
 	}
 
+	/**
+	 * add wake to the boat
+	 * 
+	 * @param time
+	 */
 	public void addWake(int time) {
 		wake.add(new WakeBubble(ax() - (height / 2 - 10) * Math.cos(angle), ay() - (height / 2 - 10) * Math.sin(angle),
 				time / speed));
 	}
 
+	/**
+	 * rotate toward the given angle
+	 * 
+	 * @param angle
+	 */
 	public void rotateTo(double angle) {
 		double diff = absMin(absMin(this.angle - angle, Math.PI * 2 - angle + this.angle),
 				Math.PI * 2 + angle - this.angle);
@@ -217,6 +259,13 @@ public class Boat extends RotatingPicture {
 		}
 	}
 
+	/**
+	 * calculates absolute min between a and b and returns its
+	 * 
+	 * @param a
+	 * @param b
+	 * @return abs min of a and b
+	 */
 	public static double absMin(double a, double b) {
 		double min = Math.min(Math.abs(a), Math.abs(b));
 		if (Math.abs(a) == min) {
@@ -229,6 +278,9 @@ public class Boat extends RotatingPicture {
 	}
 }
 
+/**
+ * handles boat cargo
+ */
 class Cargo {
 	// 0 means no cargo
 	// 1 means orange
@@ -240,6 +292,9 @@ class Cargo {
 		fillRandom();
 	}
 
+	/**
+	 * fill the cargo with random colors
+	 */
 	public void fillRandom() {
 		for (int i = 0; i < cargo.length; i++) {
 			cargo[i] = (int) (Math.random() * 2) + 1;
@@ -264,6 +319,12 @@ class Cargo {
 		return false;
 	}
 
+	/**
+	 * returns if the boat has cargo of the specified type
+	 * 
+	 * @param type
+	 * @return success
+	 */
 	public boolean hasCargo(int type) {
 		if (type == 10) {
 			return hasCargo();
@@ -276,10 +337,20 @@ class Cargo {
 		return false;
 	}
 
+	/**
+	 * determines if the boat has any cargo on board still
+	 * 
+	 * @return boat has cargo
+	 */
 	public boolean hasCargo() {
 		return hasCargo(1) || hasCargo(2);
 	}
 
+	/**
+	 * get the array of cargo
+	 * 
+	 * @return array
+	 */
 	public int[] get() {
 		return cargo;
 	}
@@ -301,6 +372,12 @@ class DockStamp {
 		docked = false;
 	}
 
+	/**
+	 * boat enters the dock: set the time to 0, store the dock type, set docking
+	 * false and docked true
+	 * 
+	 * @param docking polygon object
+	 */
 	public void enter(DockPoly d) {
 		time = 0;
 		type = d.type;
@@ -308,6 +385,13 @@ class DockStamp {
 		docked = true;
 	}
 
+	/**
+	 * fire with every boat paint: increments time, and every Boat.unloadTime
+	 * attempts to remove a piece of cargo
+	 * 
+	 * @param c
+	 * @return success
+	 */
 	public boolean time(Cargo c) {
 		if (docked && c.hasCargo(type)) {
 			time++;
@@ -325,7 +409,9 @@ class DockStamp {
 
 @SuppressWarnings("serial")
 class WakeBubble extends Point {
+	// colors generated here:
 	// https://coolors.co/defffc-9bc9fd-7db2de-8dbce2-defffc
+	// available colors for wake
 	static final Color[] colors = { new Color(222, 255, 252), new Color(155, 201, 253), new Color(125, 178, 222),
 			new Color(141, 188, 226), new Color(222, 255, 252) };
 	int time;

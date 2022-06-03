@@ -32,6 +32,7 @@ public class MapEditor extends JPanel implements ActionListener, KeyListener, Mo
 	int currObject = 0;
 	int currList = 0;
 
+	@SuppressWarnings("rawtypes")
 	ArrayList[] lists;
 
 //<Sector> entryPoints
@@ -310,6 +311,7 @@ public class MapEditor extends JPanel implements ActionListener, KeyListener, Mo
 	public void mouseExited(MouseEvent m) {
 	}
 
+	@SuppressWarnings("unchecked")
 	public void mousePressed(MouseEvent m) {
 		if (m.getButton() == 1) {
 			if (m.isControlDown()) {

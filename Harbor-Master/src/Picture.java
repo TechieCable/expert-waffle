@@ -260,6 +260,13 @@ class PictureScroller {
 			current = 0;
 		}
 	}
+	
+	public void reset() {
+		current = 0;
+		for (int i = 0; i < pics.size(); i++) {
+			pics.get(i).x = startX + Driver.screenW * (i + 1) * 3 / 4;
+		}
+	}
 
 	public Picture getCurrent() {
 		if (pics.size() == 0)
