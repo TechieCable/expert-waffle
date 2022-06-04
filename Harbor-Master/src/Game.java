@@ -11,7 +11,6 @@ public class Game {
 	CursorDrag cursorDrag;
 	Map m;
 	int boatGenTime;
-	int cargo;
 	int score;
 	boolean gameOver;
 	boolean playing;
@@ -20,6 +19,9 @@ public class Game {
 		generate();
 	}
 
+	/**
+	 * generate the game information
+	 */
 	public void generate() {
 		boats = new ArrayList<Boat>();
 		cursorDrag = new CursorDrag();
@@ -29,12 +31,18 @@ public class Game {
 		playing = false;
 	}
 
+	/**
+	 * spawn boats, paint map, manage score, boat collisions, dock checks, land
+	 * checks, border checks, paint boats, paint score
+	 * 
+	 * @param Graphics
+	 */
 	public void paint(Graphics g) {
-		if (boatGenTime == 0 && boats.size() < maxBoats * (score + 10) / 10) {
+		if (boatGenTime == 0 && boats.size() < maxBoats * (score + 10.0) / 10) {
 			Sector entry = m.randomEntry();
 			Boat b = new Boat(entry.x, entry.y, randomBoatNum());
 			boats.add(b);
-			boatGenTime = (int) (500 * Math.pow(Math.E, -(score / 500 + 1)) + 317);
+			boatGenTime = (int) (500 * Math.pow(Math.E, -(score / 500.0 + 1)) + 317);
 		}
 		if (boatGenTime > 0)
 			boatGenTime--;
@@ -120,6 +128,13 @@ public class Game {
 		g.setFont(Driver.defaultFont);
 	}
 
+	/**
+	 * returns a position either around the boat that is on the water, or a random
+	 * water position
+	 * 
+	 * @param Boat
+	 * @return valid position
+	 */
 	public Position redirectionPos(Boat b) {
 		Position p = new Position((int) (b.ax() - 100 * Math.cos(b.angle - Math.PI / 4)),
 				(int) (b.ay() - 100 * Math.sin(b.angle - Math.PI / 4)));
@@ -135,6 +150,11 @@ public class Game {
 		return p;
 	}
 
+	/**
+	 * handles clicks and checks if the click is on a boat
+	 * 
+	 * @param MouseEvent
+	 */
 	public void boatPressHandler(MouseEvent e) {
 		for (int i = 0; i < boats.size(); i++) {
 			if (boats.get(i).clicked(e.getX(), e.getY())) {
@@ -146,6 +166,11 @@ public class Game {
 		}
 	}
 
+	/**
+	 * handles drags after a boat has been clicked
+	 * 
+	 * @param MouseEvent
+	 */
 	public void boatDragHandler(MouseEvent e) {
 		if (cursorDrag.setCurr(e)) {
 			try {
@@ -155,6 +180,11 @@ public class Game {
 		}
 	}
 
+	/**
+	 * returns a random number from 1, 2, and 4
+	 * 
+	 * @return 1, 2, or 4, randomly
+	 */
 	public static int randomBoatNum() {
 		int res = 0;
 		while (!(res == 1 || res == 2 || res == 4)) {

@@ -5,7 +5,6 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.DataLine;
-import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class Music implements Runnable {
 	Thread t;
@@ -15,8 +14,8 @@ public class Music implements Runnable {
 	String fn;
 
 	public Music(String fileName, boolean loops) {
-		fn = fileName;
-		audioFile = new File(fileName);
+		fn = "src/audio/" + fileName;
+		audioFile = new File(fn);
 		try {
 			audioStream = AudioSystem.getAudioInputStream(audioFile);
 			AudioFormat format = audioStream.getFormat();
@@ -28,12 +27,8 @@ public class Music implements Runnable {
 			}
 			audioClip.open(audioStream);
 			// audioClip.start();
-		} catch (UnsupportedAudioFileException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println(e);
 		}
 	}
 
@@ -66,12 +61,8 @@ public class Music implements Runnable {
 			audioClip = (Clip) AudioSystem.getLine(info);
 			audioClip.open(audioStream);
 			audioClip.start();
-		} catch (UnsupportedAudioFileException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println(e);
 		}
 	}
 

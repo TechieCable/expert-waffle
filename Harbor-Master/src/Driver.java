@@ -153,8 +153,8 @@ public class Driver extends JPanel
 
 		try {
 			// change cursor
-			frame.getContentPane().setCursor(Toolkit.getDefaultToolkit()
-					.createCustomCursor(ImageIO.read(new File("Cursor.png")), new Point(16, 16), "blank cursor"));
+			frame.getContentPane().setCursor(Toolkit.getDefaultToolkit().createCustomCursor(
+					ImageIO.read(Driver.class.getResource("/imgs/cursor.png")), new Point(16, 16), "blank cursor"));
 
 			// load map files
 			Files.walk(Paths.get("src/imgs/")).forEach(path -> {
@@ -164,7 +164,7 @@ public class Driver extends JPanel
 				}
 			});
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println(e);
 		}
 
 		titles = new MultiPicture(0, 0, new String[] { "Title.png", "Title_Highlighted.png" }, 1);

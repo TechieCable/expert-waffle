@@ -1,5 +1,3 @@
-import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
@@ -13,15 +11,27 @@ public class Map extends Picture {
 	ArrayList<DockPoly> docks = new ArrayList<DockPoly>();
 	ArrayList<EPolygon> water = new ArrayList<EPolygon>();
 
+	/**
+	 * accepts an integer ID to find a map in the form map#.png and map#.txt
+	 * 
+	 * @param ID
+	 */
 	public Map(int id) {
 		this("map" + id + ".png", "map" + id + ".txt");
 	}
 
+	/**
+	 * creates a map, importing its image and information from the sector file
+	 * 
+	 * @param fileName
+	 * @param sectorFileName
+	 */
 	public Map(String fileName, String sectorFileName) {
 		super(0, 0, fileName, 1);
 
 		try {
-			Scanner s = new Scanner(new File(Map.class.getResource("/map-sectors/" + sectorFileName).getPath()));
+//			Scanner s = new Scanner(new File(Map.class.getResource("/map-sectors/" + sectorFileName).getPath()));
+			Scanner s = new Scanner(new File("src/map-sectors/" + sectorFileName));
 
 			while (s.hasNextLine()) {
 				String x = s.next();
@@ -42,28 +52,21 @@ public class Map extends Picture {
 		}
 	}
 
-	public void paint(Graphics g) {
-		super.paint(g);
-
-		g.setColor(Color.white);
-//		for (EntrySector x : entryPoints) {
-//			g.fillOval(x.x - Sector.width / 2, x.y - Sector.width / 2, Sector.width, Sector.width);
-//		}
-//		for (DockPoly x : docks) {
-//			g.drawPolygon(x);
-//			g.fillOval(x.dockX, x.dockY, 10, 10);
-//		}
-	}
-
-	public static int[] cors(String s) {
-		return new int[] { Integer.valueOf(s.substring(0, Sector.z.length())),
-				Integer.valueOf(s.substring(Sector.z.length())) };
-	}
-
+	/**
+	 * returns a random entry point from the list of available points
+	 * 
+	 * @return random entry Sector
+	 */
 	public Sector randomEntry() {
 		return entryPoints.get((int) (Math.random() * (entryPoints.size())));
 	}
 
+	/**
+	 * returns true if a point is over land
+	 * 
+	 * @param Point
+	 * @return is over land
+	 */
 	public boolean overLand(Point p) {
 		for (EPolygon x : land) {
 			if (x.contains(p)) {
@@ -73,6 +76,12 @@ public class Map extends Picture {
 		return false;
 	}
 
+	/**
+	 * returns true if a boat is over land
+	 * 
+	 * @param Boat
+	 * @return is over land
+	 */
 	public boolean overLand(Boat b) {
 		for (EPolygon x : land) {
 			if (x.intersects(b.getRect())) {
@@ -82,6 +91,12 @@ public class Map extends Picture {
 		return false;
 	}
 
+	/**
+	 * returns true if a point is in water
+	 * 
+	 * @param Point
+	 * @return is in water
+	 */
 	public boolean inWater(Point p) {
 		for (EPolygon x : water) {
 			if (x.contains(p)) {
@@ -91,6 +106,11 @@ public class Map extends Picture {
 		return false;
 	}
 
+	/**
+	 * returns a random point that is in water
+	 * 
+	 * @return Point
+	 */
 	public Point randomWaterPoint() {
 		EPolygon rand = water.get((int) (Math.random() * water.size()));
 		Rectangle r = rand.getBounds();
