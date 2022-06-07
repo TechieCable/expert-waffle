@@ -12,12 +12,15 @@ public class Picture {
 	protected AffineTransform tx;
 
 	/**
-	 * x,y is center of image
+	 * x,y is corner of image
 	 */
 	protected int x, y;
 	protected double scaleSize;
 	protected double width, height;
 
+	/**
+	 * default
+	 */
 	public Picture() {
 		img = null;
 		tx = null;
@@ -29,6 +32,7 @@ public class Picture {
 	}
 
 	/**
+	 * takes x, y, a filename (in /imgs/), and a scale size
 	 * 
 	 * @param x
 	 * @param y
@@ -48,6 +52,7 @@ public class Picture {
 	}
 
 	/**
+	 * changes the picture
 	 * 
 	 * @param fileName
 	 */
@@ -57,6 +62,7 @@ public class Picture {
 	}
 
 	/**
+	 * paint the picture
 	 * 
 	 * @param g
 	 */
@@ -96,22 +102,12 @@ public class Picture {
 	}
 
 	/**
+	 * gets an image at the given path
 	 * 
 	 * @param path
-	 * @return
+	 * @return image
 	 */
 	protected Image getImage(String path) {
-		Image tempImage = null;
-		try {
-			URL imageURL = Picture.class.getResource(path);
-			tempImage = Toolkit.getDefaultToolkit().getImage(imageURL);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return tempImage;
-	}
-
-	public static Image getImg(String path) {
 		Image tempImage = null;
 		try {
 			URL imageURL = Picture.class.getResource(path);
@@ -260,7 +256,7 @@ class PictureScroller {
 			current = 0;
 		}
 	}
-	
+
 	public void reset() {
 		current = 0;
 		for (int i = 0; i < pics.size(); i++) {

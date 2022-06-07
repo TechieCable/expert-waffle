@@ -123,6 +123,12 @@ public class Map extends Picture {
 	}
 }
 
+/**
+ * extended polygon class
+ * 
+ * takes in a string of points as they appear in a map sector file
+ *
+ */
 @SuppressWarnings("serial")
 class EPolygon extends Polygon {
 	public EPolygon(String points) {
@@ -136,13 +142,26 @@ class EPolygon extends Polygon {
 		}
 	}
 
+	/**
+	 * returns true if the given boat is over this polygon
+	 * 
+	 * @param Boat
+	 * @return boat is over
+	 */
 	public boolean isOver(Boat b) {
 		return this.intersects(b.getRect());
 	}
 }
 
+/**
+ * dock polygon
+ * 
+ * includes dock x and y location, angle, and dock type
+ *
+ */
 @SuppressWarnings("serial")
 class DockPoly extends EPolygon {
+	private static final int snapDist = 8;
 	int dockX, dockY;
 	double angle;
 	int type;
@@ -155,16 +174,21 @@ class DockPoly extends EPolygon {
 		this.type = Integer.valueOf(type);
 	}
 
+	/**
+	 * returns true if the given boat is within the snapDist radius
+	 * 
+	 * @param Boat
+	 * @return within snapDist radius
+	 */
 	public boolean snap(Boat b) {
-		return (Math.sqrt(Math.pow(b.ax() - dockX, 2) + Math.pow(b.ay() - dockY, 2))) < 8;
+		return (Math.sqrt(Math.pow(b.ax() - dockX, 2) + Math.pow(b.ay() - dockY, 2))) < snapDist;
 	}
 }
 
 @SuppressWarnings("serial")
 class Sector extends Position {
-	static int width = 20;
-	static String z = "000";
-	int highlight = 0;
+	static final int width = 20;
+	static final String z = "000";
 
 	public Sector(int x, int y) {
 		super(x, y);

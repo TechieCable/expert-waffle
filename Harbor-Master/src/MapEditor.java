@@ -21,7 +21,7 @@ import javax.swing.Timer;
 
 @SuppressWarnings("serial")
 public class MapEditor extends JPanel implements ActionListener, KeyListener, MouseListener, MouseMotionListener {
-	public static int screenW = 1920, screenH = 1080;
+	static final int screenW = 1920, screenH = 1080;
 
 	Map m = new Map(3);
 	Rectangle infoSection = new Rectangle(10, 10, 250, 25);
@@ -34,11 +34,6 @@ public class MapEditor extends JPanel implements ActionListener, KeyListener, Mo
 
 	@SuppressWarnings("rawtypes")
 	ArrayList[] lists;
-
-//<Sector> entryPoints
-//<EPolygon> land
-//<DockPoly> docks
-//<EPolygon> water
 
 	ArrayList<Message> messages = new ArrayList<Message>();
 	int currTime = 0;
